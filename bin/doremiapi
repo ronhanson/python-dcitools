@@ -1,0 +1,133 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# vim: ai ts=4 sts=4 et sw=4 nu
+"""
+(c) 2014 Ronan Delacroix
+Doremi DCP2000 API Utility - Main File
+:author: Ronan Delacroix
+"""
+import clize
+import dcitools.devices.doremi.commands as doremi_commands
+import dcitools.devices.doremi.snmp as doremi_snmp
+import dcitools.devices.doremi.server as doremi_server
+import dcitools.devices.doremi.cli as doremi_cli
+import toolbox
+
+@clize.clize()
+def execute(address, key, port=11730, format="text", debug=False, *args, **kwargs):
+    """
+    Contact a Doremi Server API and execute a command, retrieve the result and display it.
+
+    address: Address of the server
+
+    key: Command key
+
+    port: Port of the server
+
+    format: Format of the output. Value can be 'text', 'json', 'xml', or even 'html'.
+
+    debug: Debug mode.
+
+    args: Command parameters
+
+    """
+    if not (key in doremi_commands.NAMES):
+        raise Exception("Message Key {} is unknown.".format(key))
+
+    server = doremi_server.DoremiServer(address, port=port, debug=debug)
+
+    result = server.command(key, *args, **kwargs)
+    #import pdb
+    #pdb.set_trace()
+    if format=='json':
+        result = toolbox.text.render_json(result)
+    elif format=='html':
+        result = toolbox.text.render_html(result)
+    elif format=='xml':
+        result = toolbox.text.render_xml(result)
+    else:
+        print("\nResults : \n")
+        result = toolbox.text.dict_to_plaintext(result, indent=1)
+
+    print(result)
+
+    return
+
+@clize.clize()
+def list():
+    """
+    List available DCP2000 Command Keys
+    """
+    print("""
+    Available DCP2000 commands are :
+    """)
+    print('\t - ' + '\n\t - '.join(doremi_commands.NAMES.keys()))
+    print("""
+    Type :
+        > doremiapi execute <IP> GetCPLList
+    """)
+
+@clize.clize()
+def cli(address, port=11730, debug=False):
+    """
+    Command Line Interface mode.
+
+    Allows you to connect to a server and enter CLI mode. You can then type the commands you want.
+
+    address: Address of the server
+
+    port: Port of the server
+
+    debug: Debug mode
+    """
+    interpreter = doremi_cli.CLI(address, port, debug)
+    try:
+        interpreter.cmdloop()
+    except KeyboardInterrupt as k:
+        print("\nExiting Doremi API CLI.")
+    exit(0)
+
+@clize.clize()
+def snmplist():
+    """
+    List available SNMP Command Keys
+    """
+    print("""
+    Available SNMP commands are :
+    """)
+    print('\t - ' + '\n\t - '.join(doremi_snmp.SNMP_COMMANDS.keys()))
+    print('\t - All (get all keys and print them)')
+    print("""
+    Type :
+        > doremiapi snmp <IP> Firmware
+    Or :
+        > doremiapi snmp <IP> All
+    """)
+
+@clize.clize()
+def snmp(address, key):
+    """
+    SNMP commands mode.
+
+    address: Address of the server
+
+    key: Key of the command
+    """
+
+    if key.lower()=="all":
+        for k in doremi_snmp.SNMP_COMMANDS:
+            print("{} : {}".format(k, doremi_snmp.SNMP_COMMANDS[k](address)))
+        return
+
+    if not (key in doremi_snmp.SNMP_COMMANDS):
+        print("SNMP Key '{}' is unknown.".format(key))
+        return
+
+    print(doremi_snmp.SNMP_COMMANDS[key](address))
+
+
+    return
+
+
+if __name__ == "__main__":
+    clize.run([execute, list, cli, snmp, snmplist], description="""Doremi Command Launcher""", footnotes='"Be strong, be good. But have a glass of wine first."')
