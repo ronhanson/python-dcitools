@@ -1,0 +1,9 @@
+v0.0.1, 2014-01-22 -- Initial release.
+v0.0.2, 2014-01-23 -- Bugfix on get_schedule_info2 response handler
+v0.0.3, 2014-01-23 -- Command names changes. CLI mode. Auto Completion. Main script doremiapi needs a full code cleanup already.
+v0.0.4, 2014-01-30 -- Loads of bugfixes in handlers. SNMP commands addition.
+v0.0.5, 2014-02-01 -- First version of Schedule Data Seeker.
+v0.0.6, 2014-02-04 -- Small bugfixes, fixed packaging.
+v0.0.7, 2014-02-11 -- Many new feature in Schedule Data Seeker. Refactoring. Settings engine remade.
+v0.0.8, 2014-06-01 -- Update with toolbox. Plenty of changes.
+v0.1.0, 2014-10-03 -- Changed repo. Various updates.
