@@ -29,7 +29,7 @@ It is not for now so just look at the code as it is commented for that.
 Scripts have been created in order to use DCP2000 apis directly from command lines.
 This scripts is named doremi.py and its usage can be found by typing :
 
-   python bin/doremi.py --help
+   bin/doremiapi --help
 
 That should be fairly simple.
  
