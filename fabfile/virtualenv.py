@@ -12,7 +12,6 @@ def init():
         print(cyan('\nCreating the virtual env...'))
 
         local('pyvenv-3.4 venv')
-        local('venv/bin/pip install -U fabric', capture=True)
 
         print(green('Virtual env created.'))
 
