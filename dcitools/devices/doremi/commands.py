@@ -11,6 +11,7 @@ from __future__ import (unicode_literals, absolute_import,
 from . import handlers
 import toolbox
 import logging
+import binascii
 
 TIMEOUT = 3600
 
@@ -133,7 +134,7 @@ class DoremiAPICommand:
 
     def __init__(self, name, key, handler, timeout=TIMEOUT):
         self.name = name
-        self.key = key.decode('hex')
+        self.key = bytes.fromhex(key)
         self.handler = handler
         self.timeout = timeout
 
@@ -153,13 +154,13 @@ class DoremiAPICommand:
         0x01 # Version 1
         0x01 # DCP-2000 Intra-Theater Messages Packs
         """
-        return '060E2B340205010A0E10010101'.decode('hex')
+        return bytes.fromhex('060E2B340205010A0E10010101')
 
     def construct(self, *args, **kwargs):
         return self.header() + self.key + self.ber(*args, **kwargs) + self.request_id() + self.data(*args, **kwargs)
 
     def to_hex(self, *args, **kwargs):
-        return self.construct(*args, **kwargs).encode('hex')
+        return binascii.hexlify(self.construct(*args, **kwargs))
 
     def ber(self, *args, **kwargs):
         siz = len(self.data(*args, **kwargs))
@@ -175,7 +176,7 @@ class DoremiAPICommand:
         if self.handler:
             return self.handler(*args, **kwargs).tostring()
         else:
-            return str('')
+            return bytearray()
 
     def explain(self, *args, **kwargs):
         ppc = pretty_print_command(self.header(), self.key, self.ber(*args, **kwargs), self.request_id(inc=False),
