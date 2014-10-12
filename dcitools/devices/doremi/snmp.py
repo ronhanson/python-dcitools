@@ -51,9 +51,9 @@ def attached_projector_model(ip_address):
     """
     Returns the attached projector model
     """
-    vendor = str(snmp_get(PROJECTOR_VENDOR_OID, ip_address))
-    model = str(snmp_get(PROJECTOR_MODEL_OID, ip_address))
-    return '%s : %s' % (vendor, model)
+    vendor = str(snmp_get(PROJECTOR_VENDOR_OID, ip_address)) or "Unknown"
+    model = str(snmp_get(PROJECTOR_MODEL_OID, ip_address)) or "Unknown"
+    return '%s - %s' % (vendor, model)
 
 
 def serial_number(ip_address):
@@ -70,7 +70,7 @@ def current_kdm(ip_address):
     kdm = snmp_get(CURRENT_KDM_OID, ip_address)
     # -- Blank KDMs are returned when playing unencrypted content
     if kdm and kdm != '00000000-0000-0000-0000-000000000000':
-        return str(kdm)
+        return kdm
     else:
         return None
 
@@ -83,7 +83,7 @@ def current_kdm_expiry(ip_address):
     kdm = snmp_get(CURRENT_KDM_OID, ip_address)
     hours_remaining = snmp_get(CURRENT_KDM_EXPIRY_OID, ip_address)
     if hours_remaining and kdm != '00000000-0000-0000-0000-000000000000':
-        return (datetime.datetime.now() + datetime.timedelta(hours = int(hours_remaining))).date()
+        return datetime.datetime.now() + datetime.timedelta(hours=int(hours_remaining))
     else:
         return None
 

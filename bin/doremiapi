@@ -6,15 +6,20 @@
 Doremi DCP2000 API Utility - Main File
 :author: Ronan Delacroix
 """
-import clize
+import sys
+import argparse
 import dcitools.devices.doremi.commands as doremi_commands
 import dcitools.devices.doremi.snmp as doremi_snmp
 import dcitools.devices.doremi.server as doremi_server
 import dcitools.devices.doremi.cli as doremi_cli
+import dcitools.devices.doremi.requests as requests
+
 import toolbox
 
-@clize.clize()
-def execute(address, key, port=11730, format="text", debug=False, *args, **kwargs):
+toolbox.log.configure_logging("doremiapi")
+
+
+def execute(address, key, args, port=11730, format="text", debug=False):
     """
     Contact a Doremi Server API and execute a command, retrieve the result and display it.
 
@@ -31,29 +36,20 @@ def execute(address, key, port=11730, format="text", debug=False, *args, **kwarg
     args: Command parameters
 
     """
-    if not (key in doremi_commands.NAMES):
-        raise Exception("Message Key {} is unknown.".format(key))
+    if not requests.get_by_name(key):
+        print("Message key '{}' is unknown.".format(key), file=sys.stderr)
+        exit(1)
 
     server = doremi_server.DoremiServer(address, port=port, debug=debug)
 
-    result = server.command(key, *args, **kwargs)
-    #import pdb
-    #pdb.set_trace()
-    if format=='json':
-        result = toolbox.text.render_json(result)
-    elif format=='html':
-        result = toolbox.text.render_html(result)
-    elif format=='xml':
-        result = toolbox.text.render_xml(result)
-    else:
-        print("\nResults : \n")
-        result = toolbox.text.dict_to_plaintext(result, indent=1)
+    result = server.command(key, *args)
+
+    result = toolbox.text.pretty_render(result, format=format, indent=1)
 
     print(result)
+    exit(0)
 
-    return
 
-@clize.clize()
 def list():
     """
     List available DCP2000 Command Keys
@@ -61,14 +57,15 @@ def list():
     print("""
     Available DCP2000 commands are :
     """)
-    print('\t - ' + '\n\t - '.join(doremi_commands.NAMES.keys()))
+    print('\t - ' + '\n\t - '.join(requests.index_by_name.keys()))
     print("""
     Type :
         > doremiapi execute <IP> GetCPLList
     """)
+    exit(0)
 
-@clize.clize()
-def cli(address, port=11730, debug=False):
+
+def cli(address, port=11730, format='text', debug=False):
     """
     Command Line Interface mode.
 
@@ -80,14 +77,14 @@ def cli(address, port=11730, debug=False):
 
     debug: Debug mode
     """
-    interpreter = doremi_cli.CLI(address, port, debug)
+    interpreter = doremi_cli.CLI(address, port, debug=debug, format=format)
     try:
         interpreter.cmdloop()
-    except KeyboardInterrupt as k:
+    except KeyboardInterrupt:
         print("\nExiting Doremi API CLI.")
     exit(0)
 
-@clize.clize()
+
 def snmplist():
     """
     List available SNMP Command Keys
@@ -103,8 +100,9 @@ def snmplist():
     Or :
         > doremiapi snmp <IP> All
     """)
+    exit(0)
 
-@clize.clize()
+
 def snmp(address, key):
     """
     SNMP commands mode.
@@ -114,7 +112,7 @@ def snmp(address, key):
     key: Key of the command
     """
 
-    if key.lower()=="all":
+    if key.lower() == "all":
         for k in doremi_snmp.SNMP_COMMANDS:
             print("{} : {}".format(k, doremi_snmp.SNMP_COMMANDS[k](address)))
         return
@@ -125,9 +123,45 @@ def snmp(address, key):
 
     print(doremi_snmp.SNMP_COMMANDS[key](address))
 
+    exit(0)
 
-    return
 
+def main():
+    parser = argparse.ArgumentParser(description="""Doremi Command Launcher""", epilog='"Be strong, be good. But have a glass of wine first."')
+
+    parsers = parser.add_subparsers(title="Commands")
+    execute_parser = parsers.add_parser('execute', aliases=['x'], help="Execute a Doremi API command.")
+
+    execute_parser.add_argument('address', help='Address of the Doremi server.')
+    execute_parser.add_argument('key',  help='Command name/key of the Doremi server.')
+    execute_parser.add_argument('args', nargs='*', help='Command parameters...')
+    execute_parser.add_argument('--port', type=int, default=11730, help='port to connect the DCP2000.')
+    execute_parser.add_argument('--format', choices=['text', 'xml', 'json', 'html'], default='text', help='Format to display the response.')
+    execute_parser.add_argument('--debug',  action='store_true', help='Enable Debugging Output.')
+    execute_parser.set_defaults(func=execute)
+
+    list_parser = parsers.add_parser('list', help="List available Doremi API commands.")
+    list_parser.set_defaults(func=list)
+
+    snmp_parser = parsers.add_parser('snmp', help="Execute an SNMP command.")
+    snmp_parser.add_argument('address', help='Address of the Doremi server.')
+    snmp_parser.add_argument('key', help='SNMP key.')
+    snmp_parser.set_defaults(func=snmp)
+
+    snmplist_parser = parsers.add_parser('snmplist', help="List available SNMP commands.")
+    snmplist_parser.set_defaults(func=snmplist)
+
+    cli_parser = parsers.add_parser('cli', help="Command Line Interface to Doremi API.")
+    cli_parser.add_argument('address', help='Address of the Doremi server.')
+    cli_parser.add_argument('--port', type=int, default=11730, help='Port to connect the Doremi server.')
+    cli_parser.add_argument('--format', choices=['text', 'xml', 'json', 'html'], help='Format to display the response.')
+    cli_parser.add_argument('--debug',  action='store_true', help='Enable Debugging Output.')
+    cli_parser.set_defaults(func=cli)
+
+    args = vars(parser.parse_args())
+    func = args.pop('func')
+    func(**args)
+    exit(0)
 
 if __name__ == "__main__":
-    clize.run([execute, list, cli, snmp, snmplist], description="""Doremi Command Launcher""", footnotes='"Be strong, be good. But have a glass of wine first."')
+    main()

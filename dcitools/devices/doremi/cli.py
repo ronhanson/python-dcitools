@@ -11,8 +11,9 @@ import os
 import cmd
 import shlex
 import toolbox
-from . import commands as doremi_commands
 from . import server as server
+from . import requests
+import six
 
 
 class CLI(cmd.Cmd, object):
@@ -21,7 +22,7 @@ class CLI(cmd.Cmd, object):
     intro = '\n<< Welcome to Doremi API CLI >>\n'
     doc_leader = '\n<<Doremi API CLI Help Section>>\n'
 
-    def __init__(self, address, port, debug=False):
+    def __init__(self, address, port, debug=False, format='text'):
         """
         Constructor
         """
@@ -29,7 +30,11 @@ class CLI(cmd.Cmd, object):
         import readline
         import rlcompleter
         readline.parse_and_bind("set show-all-if-ambiguous on")
-        reload(sys)  ## So as to enable setdefaultencoding
+        if six.PY3:
+            import importlib
+            importlib.reload(sys)
+        else:
+            reload(sys)  ## So as to enable setdefaultencoding
         if 'libedit' in readline.__doc__:
             readline.parse_and_bind("bind ^I rl_complete")
             readline.parse_and_bind("bind '\t' rl_complete")
@@ -41,6 +46,7 @@ class CLI(cmd.Cmd, object):
         self.port = port
         self.debug = debug
         self.client = None
+        self.format = format
         super(CLI, self).__init__(completekey='tab')
 
     def preloop(self):
@@ -76,11 +82,10 @@ class CLI(cmd.Cmd, object):
         if arg:
             # XXX check arg syntax
 
-            if arg in doremi_commands.NAMES:
+            if requests.get(arg):
                 self.stdout.write("\n%s Help : \n" % str(arg))
-                self.stdout.write("\tSummary :\n\t\tTODO (%s)\n\n" % (str(doremi_commands.NAMES[arg])))
-                from inspect import getargspec
-                self.stdout.write("\tParameters :\n\t\t%s\n\n" % (str(', '.join(getargspec(doremi_commands.NAMES[arg].handler).args))))
+                self.stdout.write("\tSummary :\n\t\t%s\n\n" % requests.get(arg).name)
+                self.stdout.write("\tParameters :\n\t\t%s\n\n" % (str(', '.join(requests.get(arg).element_names))))
                 return
             try:
                 func = getattr(self, 'help_' + arg)
@@ -111,27 +116,27 @@ class CLI(cmd.Cmd, object):
                     if name == prevname:
                         continue
                     prevname = name
-                    cmd=name[3:]
+                    cmd = name[3:]
                     if cmd in help:
                         cmds_doc.append(cmd)
                         del help[cmd]
-                    elif name[3:] in doremi_commands.NAMES.keys():
+                    elif requests.get(name[3:]):
                         cmds_doc.append(cmd)
                     elif hasattr(self, name):
                         cmds_doc.append(cmd)
                     else:
                         cmds_undoc.append(cmd)
             self.stdout.write("%s\n" % str(self.doc_leader))
-            self.print_topics(self.doc_header,   cmds_doc,   15,80)
-            self.print_topics(self.misc_header,  help.keys(),15,80)
-            self.print_topics(self.undoc_header, cmds_undoc, 15,80)
+            self.print_topics(self.doc_header,   cmds_doc,    15, 80)
+            self.print_topics(self.misc_header,  help.keys(), 15, 80)
+            self.print_topics(self.undoc_header, cmds_undoc,  15, 80)
 
     def get_names(self):
         """
         Return all the function names of the current class + the API function names.
         """
         names = super(CLI, self).get_names()
-        names.extend([str("do_" + c) for c in doremi_commands.NAMES.keys()])
+        names.extend([str("do_" + c) for c in requests.list_names()])
         return ["%s " % name for name in names]
 
     def call_api(self, command, args=[]):
@@ -140,7 +145,7 @@ class CLI(cmd.Cmd, object):
         """
         try:
             return self.client.command(command, *args)
-        except doremi_commands.ParameterException as e:
+        except Exception as e:
             print("Wrong parameters : %s" % e)
         except Exception as e:
             print("ERROR : %s" % e)
@@ -152,14 +157,14 @@ class CLI(cmd.Cmd, object):
         When a command/do_function does not exists in that class, try to see if it exists in the API and if yes, calls it.
         """
         cmd, args, line = self.parseline(line)
-        if cmd in doremi_commands.NAMES:
+        if requests.get(cmd):
 
             args = shlex.split(args)
 
             result = self.call_api(cmd, args)
             if result:
                 print("\nResults : \n")
-                result = toolbox.text.dict_to_plaintext(result, indent=1)
+                result = toolbox.text.pretty_render(result, format=self.format, indent=1)
                 print(result)
 
             return
@@ -172,21 +177,18 @@ class CLI(cmd.Cmd, object):
 
         By default, it returns an empty list.
         """
-        from inspect import getargspec
         command = shlex.split(line)[0].replace('\x00', '').strip()
-        listparams = []
 
-        if command in doremi_commands.NAMES.keys():
-            argspec = getargspec(doremi_commands.NAMES[command].handler)
-            listparams = listparams+argspec.args
+        list_param = []
+        if requests.get_by_name(command):
+            c = requests.get_by_name(command)
+            list_param = c.element_names
 
         arg_list = shlex.split(line)[1:]
+        list_param = list_param[len(arg_list):]
 
-        listparams = listparams[len(arg_list):]
-
-        if len(listparams) > 0:
-            print("\n\tMissing : " +' '.join(['<'+k+'>' for k in listparams]),)
-            print("\n\tMissing : " +' '.join(['<'+k+'>' for k in listparams]),)
+        if len(list_param) > 0:
+            print("\n\tMissing : " +' '.join(['<'+k+'>' for k in list_param]),)
 
         return ['']
 
