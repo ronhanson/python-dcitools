@@ -7,16 +7,16 @@ Doremi DCP2000 API Utility - Main File
 :author: Ronan Delacroix
 """
 import sys
+import os
 import argparse
-import dcitools.devices.doremi.commands as doremi_commands
+import dcitools
 import dcitools.devices.doremi.snmp as doremi_snmp
 import dcitools.devices.doremi.server as doremi_server
 import dcitools.devices.doremi.cli as doremi_cli
 import dcitools.devices.doremi.requests as requests
 
 import toolbox
-
-toolbox.log.configure_logging("doremiapi")
+toolbox.log.configure_logging_to_screen()
 
 
 def execute(address, key, args, port=11730, format="text", debug=False):
@@ -36,6 +36,8 @@ def execute(address, key, args, port=11730, format="text", debug=False):
     args: Command parameters
 
     """
+    toolbox.log.configure_logging_to_screen(debug)
+
     if not requests.get_by_name(key):
         print("Message key '{}' is unknown.".format(key), file=sys.stderr)
         exit(1)
@@ -77,6 +79,8 @@ def cli(address, port=11730, format='text', debug=False):
 
     debug: Debug mode
     """
+    toolbox.log.configure_logging_to_screen(debug)
+
     interpreter = doremi_cli.CLI(address, port, debug=debug, format=format)
     try:
         interpreter.cmdloop()
@@ -126,8 +130,20 @@ def snmp(address, key):
     exit(0)
 
 
+def version():
+    """
+    Display the version number
+    """
+    try:
+        print(open(os.path.join(os.path.dirname(os.path.abspath(dcitools.__file__)), '..', 'VERSION.txt')).read().strip())
+    except:
+        print('Error - Unable to retrieve version number...')
+        exit(1)
+    exit(0)
+
+
 def main():
-    parser = argparse.ArgumentParser(description="""Doremi Command Launcher""", epilog='"Be strong, be good. But have a glass of wine first."')
+    parser = argparse.ArgumentParser(description="""Doremi API Command Launcher""", epilog='"Be strong, be good. But have a glass of wine first."')
 
     parsers = parser.add_subparsers(title="Commands")
     execute_parser = parsers.add_parser('execute', aliases=['x'], help="Execute a Doremi API command.")
@@ -158,9 +174,15 @@ def main():
     cli_parser.add_argument('--debug',  action='store_true', help='Enable Debugging Output.')
     cli_parser.set_defaults(func=cli)
 
+    version_parser = parsers.add_parser('version', help="Display the version of the dcitools library.")
+    version_parser.set_defaults(func=version)
+
     args = vars(parser.parse_args())
-    func = args.pop('func')
-    func(**args)
+    if 'func' in args:
+        func = args.pop('func')
+        func(**args)
+    else:
+        parser.print_help()
     exit(0)
 
 if __name__ == "__main__":

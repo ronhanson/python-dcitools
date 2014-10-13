@@ -26,9 +26,10 @@ class Element:
     """
     Message Element Definition
     """
-    def __init__(self, name, func):
+    def __init__(self, name, func, **kwargs):
         self.name = name
         self.func = func
+        self.kwargs=kwargs
 
 
 class ResponseElement(Element):

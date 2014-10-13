@@ -1,4 +1,4 @@
 -e git+git@github.com:ronhanson/python-toolbox.git#egg=toolbox
-clize >= 2.4, < 3.0
 moment >= 0.1.4
 jellyfish >= 0.2.1
+six >= 1.8.0

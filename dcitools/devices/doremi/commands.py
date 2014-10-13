@@ -12,6 +12,7 @@ from toolbox.bytes import *
 from .message import MessageDefinition
 from . import requests
 from . import responses
+import logging
 
 """
     Fixed Header
@@ -41,16 +42,20 @@ def get_new_request_id():
 
 
 def get_new_request_id_bytes():
-    return int_to_bytes(get_new_request_id(), size=4)
+    return int_to_bytes(get_new_request_id(), bit=32)
 
 
 def explain_klv(data):
     header_hex = toolbox.bytes.bytes_to_hex(data[0:13])
     key_hex = toolbox.bytes.bytes_to_hex(data[13:16])
-    try:
-        key_name = requests.get_by_key(key_hex).name + ' Request'
-    except KeyError:
-        key_name = responses.get_by_key(key_hex).name + ' Response'
+    message = requests.get_by_key(key_hex)
+    message_type = 'Request'
+    if not message:
+        message = responses.get_by_key(key_hex)
+        message_type = 'Response'
+    if not message:
+        return "Error, Message Key %s Unknown" % key_hex
+    key_name = message.name + ' ' + message_type
     ber, ber_size = toolbox.bytes.decode_ber(data[16:])
     ber_hex = toolbox.bytes.bytes_to_hex(data[16:16+ber_size])
     payload_start = 16+ber_size
@@ -114,7 +119,7 @@ def construct_message(message: MessageDefinition, *args, **kwargs) -> bytearray:
             else:
                 arg = args[arg_iterator]
                 arg_iterator += 1
-            value = element.func(arg)
+            value = element.func(arg, **element.kwargs)
             payload_values.append(value)
 
     payload = id + b''.join(payload_values)

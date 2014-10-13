@@ -10,7 +10,7 @@ setup(
     version=open('VERSION.txt').read().strip(),
     author='Ronan Delacroix',
     author_email='ronan.delacroix@gmail.com',
-    packages=find_packages(where='.', exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
+    packages=find_packages(where='.', exclude=["fabfile", "tools", "*.tests", "*.tests.*", "tests.*", "tests"]),
     package_data={}, #{'mypkg': ['data/*.dat']},
     scripts=[],
     license=open('LICENCE.txt').read().strip(),
