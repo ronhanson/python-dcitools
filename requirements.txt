@@ -1,4 +1,2 @@
 -e git+git@github.com:ronhanson/python-toolbox.git#egg=toolbox
-moment >= 0.1.4
-jellyfish >= 0.2.1
 six >= 1.8.0
