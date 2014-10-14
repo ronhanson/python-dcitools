@@ -30,7 +30,10 @@ import logging
     0x01 # Version 1
     0x01 # DCP-2000 Intra-Theater Messages Packs
 """
-HEADER = bytes.fromhex('060E2B340205010A0E10010101')
+if six.PY3:
+    HEADER = bytes.fromhex('060E2B340205010A0E10010101')
+else:
+    HEADER = str('060E2B340205010A0E10010101').decode('hex')
 
 REQUEST_ID = 0
 
@@ -48,10 +51,10 @@ def get_new_request_id_bytes():
 def explain_klv(data):
     header_hex = toolbox.bytes.bytes_to_hex(data[0:13])
     key_hex = toolbox.bytes.bytes_to_hex(data[13:16])
-    message = requests.get_by_key(key_hex)
+    message = requests.get_by_key(data[13:16])
     message_type = 'Request'
     if not message:
-        message = responses.get_by_key(key_hex)
+        message = responses.get_by_key(data[13:16])
         message_type = 'Response'
     if not message:
         return "Error, Message Key %s Unknown" % key_hex
@@ -77,7 +80,7 @@ def explain_klv(data):
     """.format(header_hex, key_hex, key_name, ber_hex, str(ber), id_hex, str(id), short_hex, (header_hex+key_hex+ber_hex+id_hex+short_hex))
 
 
-def parse_message(message: MessageDefinition, payload: bytes) -> collections.OrderedDict:
+def parse_message(message, payload):
     """
     Parse a byte array and gives the data back in form of a dict.
 
@@ -95,8 +98,11 @@ def parse_message(message: MessageDefinition, payload: bytes) -> collections.Ord
 
     return result
 
+#Python 3 annotations provoke syntax error in Python 2... hence this seems the only way to do that for both... Ugly!
+parse_message.__annotations__ = {'message': MessageDefinition, 'payload': bytes, 'return': collections.OrderedDict}
 
-def construct_message(message: MessageDefinition, *args, **kwargs) -> bytearray:
+
+def construct_message(message, *args, **kwargs):
     """
     Constructs a byte array to send from a message definition and various parameters.
 
@@ -128,6 +134,9 @@ def construct_message(message: MessageDefinition, *args, **kwargs) -> bytearray:
 
     return bytearray(HEADER + message.key + ber + payload)
 
+#Python 3 annotations provoke syntax error in Python 2... hence this seems the only way to do that for both... Ugly!
+construct_message.__annotations__ = {'message': MessageDefinition, 'return': bytearray}
+
 
 class CommandCall():
     """
@@ -143,6 +152,8 @@ class CommandCall():
         self.key_or_name = key_or_name
         try:
             self.request_definition = requests.get(key_or_name)
+            if not self.request_definition:
+                raise Exception("Request key %s is unknown" % key_or_name)
         except KeyError as ke:
             raise Exception("Command named %s does not exists. Implementation error. Error : %s" % (self.key_or_name, ke))
         self.debug = debug

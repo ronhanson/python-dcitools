@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShowPlaylist xmlns:spl="http://www.doremilabs.com/schemas/2009/SPL" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+    <Id>urn:uuid:${ uuid }</Id>
+    <AnnotationText>${ annotation }</AnnotationText>
+    <ShowTitleText>${ title }</ShowTitleText>
+    <IssueDate>{{ issue_date }}</IssueDate>
+    <Issuer>${ issuer }}</Issuer>
+    <Creator>${ creator }}</Creator>
+    <ContentVersion>
+        <Id>urn:uuid:${ content_version }</Id>
+        <LabelText>urn:uuid:${ content_version }</LabelText>
+    </ContentVersion>
+    <TriggerCueList>
+    {% for trigger in triggers %}
+        <TriggerCue>
+            <Id>urn:uuid:${ trigger.uuid }</Id>
+            <AnnotationText>${ trigger.annotation }</AnnotationText>
+            <TriggerName>${ trigger.name }</TriggerName>
+            <Action>${ trigger.action }</Action>
+        </TriggerCue>
+    {% endfor %}
+    </TriggerCueList>
+    <PackList>
+        <Pack>
+            <Id>urn:uuid:${ uuidgen() }</Id>
+            <AnnotationText>Pack 1</AnnotationText>
+            <EventList>
+                {% for cpl in cpls %}
+                {% if cpl.__class__.__name__ == 'CPL' %}
+                <Event>
+                    <Id>urn:uuid:${ uuidgen() }</Id>
+                    <ElementList>
+                        <MainElement>
+                            <Composition>
+                                <Id>urn:uuid:${ uuidgen() }</Id>
+                                <AnnotationText>${ cpl.title }</AnnotationText>
+                                <CompositionPlaylistID>urn:uuid:${ cpl.uuid }</CompositionPlaylistID>
+                                <ContentKind>${ cpl.kind }</ContentKind>
+                                <EditRate>${ cpl.edit_rate_a } ${ cpl.edit_rate_b }</EditRate>
+                                <IntrinsicDuration>${ cpl.duration }</IntrinsicDuration>
+                            </Composition>
+                        </MainElement>
+                    </ElementList>
+                </Event>
+                {% elif cpl.__class__.__name__ == 'SPL' %}
+            </EventList>
+        </Pack>
+        <ExternalPack>
+            <Id>urn:uuid:${ uuidgen() }</Id>
+            <AnnotationText>${ cpl.annotation }</AnnotationText>
+            <PackName>${ cpl.title }</PackName>
+            <External refid="ShowPlaylistId">urn:uuid:${ cpl.uuid }</External>
+        </ExternalPack>
+        <Pack>
+            <Id>urn:uuid:${ uuidgen() }</Id>
+            <AnnotationText>Pack ${ loop.index + 2 }</AnnotationText>
+            <EventList>
+                {% else %}
+                <!-- Error - Unknown event... -->
+                {% endif %}
+                {% endfor %}
+            </EventList>
+        </Pack>
+    </PackList>
+</ShowPlaylist>

@@ -6,6 +6,7 @@
 Doremi API Requests definition
 :author: Ronan Delacroix
 """
+import six
 
 
 class MessageDefinition:
@@ -14,7 +15,10 @@ class MessageDefinition:
     """
     def __init__(self, name, key, elements=None):
         self.name = name
-        self.key = bytes.fromhex(key)
+        if six.PY3:
+            self.key = bytes.fromhex(key)
+        else:
+            self.key = str(key).decode('hex')
         self.elements = elements or [] #List of Element or ResponseElement
 
     @property
@@ -37,7 +41,8 @@ class ResponseElement(Element):
     Response Message Element Definition
     """
     def __init__(self, name, start, end, func, text_translate=None):
-        super().__init__(name, func)
+        self.name = name
+        self.func = func
         self.start = start
         self.end = end
         self.text_translate = text_translate
@@ -62,14 +67,17 @@ class MessageList(object):
 
     def get_by_key(self, k):
         if isinstance(k, str):
-            k = bytes.fromhex(k)
+            if six.PY3:
+                k = bytes.fromhex(k)
+            else:
+                k = k.encode('hex')
         return self.index_by_key.get(bytes(k), None)
 
     def get(self, key_or_name):
         if isinstance(key_or_name, bytes) or isinstance(key_or_name, bytearray):
-            return self.get_by_key(key_or_name)
+            return self.get_by_key(key_or_name) or self.get_by_name(key_or_name)
         else:
-            return self.get_by_name(key_or_name)
+            return self.get_by_name(key_or_name) or self.get_by_key(key_or_name)
 
     def list_names(self):
         return self.index_by_name.keys()
@@ -81,7 +89,7 @@ class MessageList(object):
         if name in self.index_by_name.keys():
             return self.get_by_name(name)
 
-        return super().__getattr__(name)
+        return super(MessageList, self).__getattr__(name)
 
 
 class MessageListWrapper(MessageList):
@@ -92,13 +100,13 @@ class MessageListWrapper(MessageList):
     """
     def __init__(self, wrapped, messages):
         self.wrapped = wrapped
-        super().__init__(messages)
+        super(MessageListWrapper, self).__init__(messages)
 
     def __getattr__(self, name):
         """
         Fall back on module to get attributes
         """
         try:
-            super().__getattr__(name)
+            super(MessageListWrapper, self).__getattr__(name)
         except AttributeError:
             return getattr(self.wrapped, name)

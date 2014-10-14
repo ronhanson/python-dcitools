@@ -9,6 +9,7 @@ Doremi DCP2000 API Utility - Main File
 import sys
 import os
 import argparse
+import six
 import dcitools
 import dcitools.devices.doremi.snmp as doremi_snmp
 import dcitools.devices.doremi.server as doremi_server
@@ -39,7 +40,8 @@ def execute(address, key, args, port=11730, format="text", debug=False):
     toolbox.log.configure_logging_to_screen(debug)
 
     if not requests.get_by_name(key):
-        print("Message key '{}' is unknown.".format(key), file=sys.stderr)
+        sys.stderr.write("Message key '{}' is unknown.".format(key))
+        sys.stderr.flush()
         exit(1)
 
     server = doremi_server.DoremiServer(address, port=port, debug=debug)
@@ -146,7 +148,10 @@ def main():
     parser = argparse.ArgumentParser(description="""Doremi API Command Launcher""", epilog='"Be strong, be good. But have a glass of wine first."')
 
     parsers = parser.add_subparsers(title="Commands")
-    execute_parser = parsers.add_parser('execute', aliases=['x'], help="Execute a Doremi API command.")
+    if six.PY3:
+        execute_parser = parsers.add_parser('execute', aliases=['x'], help="Execute a Doremi API command.")
+    else:
+        execute_parser = parsers.add_parser('execute', help="Execute a Doremi API command.")
 
     execute_parser.add_argument('address', help='Address of the Doremi server.')
     execute_parser.add_argument('key',  help='Command name/key of the Doremi server.')
