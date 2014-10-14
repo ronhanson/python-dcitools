@@ -10,3 +10,4 @@ v0.1.0, 2014-10-03 -- Changed repo. Various updates.
 v0.2.0, 2014-10-13 -- Big Refactoring - revamped Doremi API engine.
 v0.2.1, 2014-10-13 -- Added some commands. Cleaning. Refactoring.
 v0.3.0, 2014-10-14 -- Python 2 and 3 support complete. Bugfixes. Added CPL and SPL Parsers/Creators.
+v0.3.1, 2014-10-14 -- Added commands + "Batch" elements handlers.

@@ -8,7 +8,7 @@ Doremi API Requests definition
 """
 import sys
 from toolbox.bytes import *
-from .message import MessageListWrapper, MessageDefinition as M, ResponseElement as E
+from .message import MessageListWrapper, MessageDefinition as M, ResponseElement as E, ResponseBatch as Batch
 
 
 RESPONSES = (
@@ -142,6 +142,53 @@ RESPONSES = (
             255: 'Out of memory',
         }),
         E('error_message', 2, -1, bytes_to_text),
+        E('response', -1, None, bytes_to_int),
+    ]),
+    M('GetCPLSize', '010E00', [
+        E('size', 0, 8, bytes_to_int),
+        E('response', -1, None, bytes_to_int),
+    ]),
+    M('GetCPLMarker', '011000', [
+        Batch('markers', 0, -1, [
+            E('label', 0, 16, bytes_to_text),
+            E('offset', 16, 20, bytes_to_int),
+        ]),
+        E('response', -1, None, bytes_to_int),
+    ]),
+    M('GetCPLPlayStat', '011200', [
+        E('error_code', 0, 4, bytes_to_int),
+        Batch('markers', 4, -1, [
+            E('uuid', 0, 16, bytes_to_uuid),
+            E('last_play', 16, 48, bytes_to_text),
+        ]),
+    ]),
+
+    M('GetKDMList', '020200', [
+        E('amount', 0, 4, bytes_to_int),
+        E('item_length', 4, 8, bytes_to_int),
+        E('list', 8, -1, bytes_to_uuid_list),
+        E('response', -1, None, bytes_to_int),
+    ]),
+    M('GetKDMInfo', '020400', [
+        E('kdm_uuid', 0, 16, bytes_to_uuid),
+        E('cpl_uuid', 16, 32, bytes_to_uuid),
+        E('not_valid_before', 32, 40, bytes_to_int),
+        E('not_valid_after', 40, 48, bytes_to_int),
+        E('key_id_list',56, -1, bytes_to_uuid_list),
+        E('response', -1, None, bytes_to_int),
+    ]),
+    M('GetKDMInfo2', '020401', [
+        E('kdm_uuid', 0, 16, bytes_to_uuid),
+        E('cpl_uuid', 16, 32, bytes_to_uuid),
+        E('not_valid_before', 32, 40, bytes_to_int),
+        E('not_valid_after', 40, 48, bytes_to_int),
+        E('key_id_list', 56, -293, bytes_to_uuid_list),
+        E('forensic_picture_disable', -293, -292, bytes_to_int),
+        E('forensic_audio_disable', -292, -291, bytes_to_int),
+        E('reserved0', -291, -290, bytes_to_int),
+        E('content_authenticator_length', -290, -289, bytes_to_int),
+        E('content_authenticator', -289, -257, bytes_to_text),
+        E('x509_subject_name', -257, -1, bytes_to_text),
         E('response', -1, None, bytes_to_int),
     ]),
 )

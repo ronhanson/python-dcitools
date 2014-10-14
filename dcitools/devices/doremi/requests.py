@@ -34,6 +34,24 @@ REQUESTS = (
         E('time', text_to_bytes, size=32),
         E('level', int_to_bytes),
     ]),
+    M('GetCPLSize', '010D00', [
+        E('uuid', uuid_to_bytes),
+    ]),
+    M('GetCPLMarker', '010F00', [
+        E('uuid', uuid_to_bytes),
+    ]),
+    M('GetCPLPlayStat', '011100', [
+        E('uuid', uuid_to_bytes),
+    ]),
+
+    M('GetKDMList', '020100'),
+    M('GetKDMInfo', '020300', [
+        E('uuid', uuid_to_bytes),
+    ]),
+    M('GetKDMInfo2', '020301', [
+        E('uuid', uuid_to_bytes),
+    ]),
+
     M('GetProductInfo', '050100'),
 )
 

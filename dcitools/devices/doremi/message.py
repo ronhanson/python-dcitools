@@ -7,7 +7,7 @@ Doremi API Requests definition
 :author: Ronan Delacroix
 """
 import six
-
+import toolbox
 
 class MessageDefinition:
     """
@@ -33,7 +33,7 @@ class Element:
     def __init__(self, name, func, **kwargs):
         self.name = name
         self.func = func
-        self.kwargs=kwargs
+        self.kwargs = kwargs
 
 
 class ResponseElement(Element):
@@ -46,6 +46,34 @@ class ResponseElement(Element):
         self.start = start
         self.end = end
         self.text_translate = text_translate
+
+
+class ResponseBatch(Element):
+    """
+    Response Message Element Definition
+    """
+    def __init__(self, name, start, end, sub_elements=None):
+        super(ResponseBatch, self).__init__(name, func=self.func)
+        self.start = start
+        self.end = end
+        self.sub_elements = sub_elements or []
+        self.text_translate = None
+
+    def func(self, byte_array):
+
+        result = []
+        length = toolbox.bytes.bytes_to_int(byte_array[0:4])
+        item_size = toolbox.bytes.bytes_to_int(byte_array[4:8])
+        for i in range(0, length):
+            item = {}
+            chunk = byte_array[8+i*item_size:8+(i+1)*item_size]
+            for e in self.sub_elements:
+                sub_chunk = chunk[e.start:e.end]
+                item[e.name] = e.func(sub_chunk)
+                if e.text_translate:
+                    item[e.name+'_text'] = e.text_translate.get(item[e.name], 'unknown value')
+            result.append(item)
+        return result
 
 
 class MessageList(object):
