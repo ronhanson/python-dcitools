@@ -1,0 +1,52 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# vim: ai ts=4 sts=4 et sw=4 nu
+"""
+(c) 2014 Ronan Delacroix
+Versionning Utility - Main File - Git Hook
+:author: Ronan Delacroix
+"""
+import sys
+import os
+import os.path
+import argparse
+import six
+import re
+import readline
+from datetime import date
+
+if six.PY3:
+    raw_input = input
+
+
+
+# This is required because git hooks are run in non-interactive
+# mode. You aren't technically supposed to have access to stdin.
+# This hack works on MaxOS and Linux. Mileage may vary on Windows.
+sys.stdin = open('/dev/tty')
+
+
+def main(commit_message_filepath):
+
+    commit_message = ''
+    with open('CHANGES.txt', 'r') as f:
+        lines = f.readlines()
+        commit_message = lines[-1]
+
+    content = ''
+    if os.path.isfile(commit_message_filepath):
+        with open(commit_message_filepath, 'r') as f:
+            content = f.read()
+
+    content = commit_message + '\n' + content
+
+    with open(commit_message_filepath, 'w') as f:
+        f.write(content)
+
+    print('Commit message set.')
+    print('Done.')
+
+
+
+if __name__ == "__main__":
+    main(sys.argv[1])

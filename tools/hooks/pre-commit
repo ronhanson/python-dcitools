@@ -1,0 +1,181 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# vim: ai ts=4 sts=4 et sw=4 nu
+"""
+(c) 2014 Ronan Delacroix
+Versionning Utility - Main File - Git Hook
+:author: Ronan Delacroix
+"""
+import sys
+import os
+import os.path
+import argparse
+import six
+import re
+import readline
+from datetime import date
+
+if six.PY3:
+    raw_input = input
+
+
+
+# This is required because git hooks are run in non-interactive
+# mode. You aren't technically supposed to have access to stdin.
+# This hack works on MaxOS and Linux. Mileage may vary on Windows.
+sys.stdin = open('/dev/tty')
+
+
+def raw_input_with_default(prompt, default):
+    def pre_input_hook():
+        print('startup hook')
+        readline.insert_text(default)
+        readline.redisplay()
+
+    readline.set_pre_input_hook(pre_input_hook)
+    try:
+        result = input(prompt)
+    finally:
+        readline.set_pre_input_hook()
+    return result
+
+
+def main():
+
+    major = 0
+    minor = 0
+    micro = 0
+    letter = 0
+    version = ''
+    version_label = ''
+
+    try:
+        with open('VERSION.txt', 'rb') as f:
+            version = f.read().decode('utf-8').strip()
+
+            v = version.split('-')
+            version_label = v[1] if len(v) > 1 else ''
+
+            version_num = v[0]
+            vlist = version_num.split('.')
+            major = int(vlist[0]) if len(vlist) > 0 else 0
+            minor = int(vlist[1]) if len(vlist) > 1 else 0
+            micro = ".".join(vlist[2:]) if len(vlist) > 2 else ''
+            micro = re.findall(r'^\d+', micro)
+            micro = int(micro[0]) if len(micro) > 0 else 0
+            letter = ".".join(vlist[2:]) if len(vlist) > 2 else ''
+            letter = re.findall(r'[a-zA-Z]+', letter)
+            letter = ord(letter[0][0]) if len(letter) > 0 else 0
+
+    except:
+        print('Error while reading and parsing VERSION.txt : %s' % version)
+        version = '0.0.1'
+        version_num = '0.0.1'
+
+    print('Actual version is %s' % version)
+    print('')
+
+    c = 'n'
+    while c == 'n':
+
+        print('Current version label is %s.' % (version_label if version_label != '' else 'not set'))
+        print('Enter a new label, or a space to erase it, or simply press enter to keep the same.')
+        l = raw_input("Response : ")
+        if l == '':
+            new_label = version_label
+        elif l == ' ':
+            new_label = ''
+        else:
+            new_label = l
+
+        print('    Label : %s' % (new_label if new_label != '' else 'None'))
+        print('')
+
+        a = 'z'
+        while not a in '12345MmbtCc':
+            print('About versioning, What is the change level of your commit ? ')
+            print('   1- Major  (M)')
+            print('   2- Minor  (m)')
+            print('   3- Micro  (b)')
+            print('   4- Letter (t)')
+            print('   5- Custom (c)')
+            a = raw_input("Response : ")
+            print('')
+            a = a[0] if len(a) > 0 else 'z'
+            if a == 'z':
+                print('    ##Wrong Answer\n')
+
+        custom = None
+        new_major = major
+        new_minor = minor
+        new_micro = micro
+        new_letter  = letter
+        if a in 'M1':
+            new_major = major+1
+            new_minor = 0
+            new_micro = 0
+            new_letter = 0
+        elif a in 'm2':
+            new_minor = minor+1
+            new_micro = 0
+            new_letter = 0
+        elif a in 'b3':
+            new_micro = micro+1
+            new_letter = 0
+        elif a in 't4':
+            if letter == 0:
+                new_letter = ord('a')
+            else:
+                new_letter = letter+1
+        elif a in 'Cc5':
+            print(version)
+            custom = raw_input_with_default("Enter the new version manually : ", version)
+            print(custom)
+
+        if custom:
+            new_version = custom.strip()
+        else:
+            if new_letter:
+                last_part = str(new_micro)+str(chr(new_letter))
+            else:
+                last_part = str(new_micro)
+
+            new_version = '.'.join(map(str, [new_major, new_minor, last_part]))
+            if new_label:
+                new_version = new_version+'-'+new_label
+
+        c = raw_input("New version will be : %s - is that correct yes/no (default:yes) ? " % new_version)
+        if len(c) > 0:
+            c = c.lower()[0]
+        print('')
+
+
+    m = ''
+    while m == '':
+        print('What is your commit message ? ')
+        m = raw_input("Response : ")
+        print('')
+
+    commit_message = "v%s - %s" % (new_version, m)
+    long_commit_message = "v%s, %s -- %s" % (new_version, date.today().strftime('%Y-%m-%d'), m)
+    print("Final commit message :")
+    print(commit_message)
+
+    with open('VERSION.txt', 'w') as f:
+        f.write(new_version)
+    os.system('git add VERSION.txt')
+    print('VERSION.txt updated.')
+
+    with open('CHANGES.txt', 'a') as f:
+        f.write('\n')
+        f.write(long_commit_message)
+    os.system('git add CHANGES.txt')
+    print('CHANGES.txt updated.')
+
+    print('Pre-Commit Done.')
+
+
+
+if __name__ == "__main__":
+
+    main()
