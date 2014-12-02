@@ -15,7 +15,7 @@ Coming next:
  - GDC
  - Dolby ?
  - Sony ?
- - Qube (someday maybe, haha, I can’t wait to code with their API again, it is a bloody joke)
+ - Qube (someday maybe, haha, I can't wait to code with their API again, it is a bloody joke)
 
 ### Usage
 

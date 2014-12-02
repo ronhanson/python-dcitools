@@ -5,6 +5,9 @@ import re
 if os.environ.get('USER', '') == 'vagrant':
     del os.link
 
+requirements = [r.strip() for r in open('requirements.txt').readlines() if not r.startswith('--')]
+requirements = [r if ('git+' not in r) else re.sub(r".*egg=(.*)", r"\1", r).strip() for r in requirements]
+
 setup(
     name='dcitools',
     version=open('VERSION.txt').read().strip(),
@@ -17,7 +20,7 @@ setup(
     description='Digital Cinema related collection of tools for Python',
     long_description=open('README.md').read().strip(),
     include_package_data=True,
-    install_requires=[r.strip() if ('git+' not in r) else re.sub(r".*egg=(.*)", "", r).strip() for r in open('requirements.txt').readlines()],
+    install_requires=requirements,
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Environment :: Console',
