@@ -102,7 +102,7 @@ RESPONSES = (
         E('unknown_field', -5, -1, bytes_to_int),
         E('response', -1, None, bytes_to_int),
     ]),
-     M('GetProductInfo', '050200', [
+    M('GetProductInfo', '050200', [
         E('product_name', 0, 16, bytes_to_text),
         E('product_serial', 16, 32, bytes_to_text),
         E('product_id', 32, 48, bytes_to_uuid),
@@ -163,21 +163,21 @@ RESPONSES = (
         ]),
     ]),
 
-    M('GetKDMList', '020200', [
+    M('GetKDMList', '020200', [ #TODO : Test
         E('amount', 0, 4, bytes_to_int),
         E('item_length', 4, 8, bytes_to_int),
         E('list', 8, -1, bytes_to_uuid_list),
         E('response', -1, None, bytes_to_int),
     ]),
-    M('GetKDMInfo', '020400', [
+    M('GetKDMInfo', '020400', [ #TODO : Test
         E('kdm_uuid', 0, 16, bytes_to_uuid),
         E('cpl_uuid', 16, 32, bytes_to_uuid),
         E('not_valid_before', 32, 40, bytes_to_int),
         E('not_valid_after', 40, 48, bytes_to_int),
-        E('key_id_list',56, -1, bytes_to_uuid_list),
+        E('key_id_list', 56, -1, bytes_to_uuid_list),
         E('response', -1, None, bytes_to_int),
     ]),
-    M('GetKDMInfo2', '020401', [
+    M('GetKDMInfo2', '020401', [ #TODO : Test
         E('kdm_uuid', 0, 16, bytes_to_uuid),
         E('cpl_uuid', 16, 32, bytes_to_uuid),
         E('not_valid_before', 32, 40, bytes_to_int),
