@@ -191,6 +191,62 @@ RESPONSES = (
         E('x509_subject_name', -257, -1, bytes_to_text),
         E('response', -1, None, bytes_to_int),
     ]),
+
+    M('GetTimeZone', '052000', [		#BGI
+    	E('timezone', 0, -1, bytes_to_text),
+        E('response', -1, None, bytes_to_int),
+    ]),
+
+    M('WhoAmI', '0E0C00', [ 			#BGI
+    	E('username', 0, 16, bytes_to_text),
+	E('dci_level', 16, -1, bytes_to_int),
+	E('response', -1, None, bytes_to_int),
+    ]),
+
+    M('GetLog', '110200', [ 			#BGI
+	E('errorcode', 0, 1, bytes_to_int),
+	E('reserved0', 1, 1, bytes_to_int),
+	E('reserved1', 2, 2, bytes_to_int),
+	E('xml', 4, -1, bytes_to_text),
+	E('response', -1, None, bytes_to_int),
+    ]),
+
+     M('GetLogLastId', '110400', [		#BGI
+     	E('errorcode', 0, 1, bytes_to_text),
+	E('reserved0', 1, 1, bytes_to_int),
+	E('reserved1', 2, 2, bytes_to_int),
+	E('last_id', 4, -1, bytes_to_int),
+	E('response', -1, None, bytes_to_int),
+     ]),
+
+      M('StatusSPL', '031C00', [		#BGI	#TODO:Test
+      	E('playblack_state', 0, 1, bytes_to_int, {0:'Error/Unknown', 1:'Stop', 2:'Play', 3:'Pause'} ),
+	E('spl_id', 1, 17, bytes_to_uuid),
+	E('show_playlist_position', 17, 21, bytes_to_int),
+	E('show_playlist_duration', 21, 25, bytes_to_int),
+	E('current_cpl_id', 25, 41, bytes_to_uuid),
+	E('current_event_id', 41, 57, bytes_to_uuid),
+	E('current_element_id', 57, 73, bytes_to_uuid),
+	E('current_element_position', 73, 77, bytes_to_int),
+	E('current_element_duration', 77, 81, bytes_to_int),
+	E('response', -1, None, bytes_to_int),
+      ]),
+
+
+      M('GetProductCertificate', '050400', [	#BGI  <== TEST
+      	E('certificate', 0, -1, bytes_to_text),
+	E('response', -1, None, bytes_to_int),
+      ]),
+
+      M('GetAPIProtocolVersion', '050600', [
+      	E('version_major', 0, 1, bytes_to_int),
+	E('version_minor', 1, 2, bytes_to_int),
+	E('version_build', 2, 3, bytes_to_int),
+      ]),
+
+
+
+
 )
 
 sys.modules[__name__] = MessageListWrapper(sys.modules[__name__], messages=RESPONSES)

@@ -53,6 +53,29 @@ REQUESTS = (
     ]),
 
     M('GetProductInfo', '050100'),
+
+    M('GetTimeZone', '051F00'), 		#BGI
+    M('WhoAmI', '0E0B00'), 			#BGI
+
+    M('GetLog', '110100', [			#BGI
+    	E('database', text_to_bytes, size=8),
+	E('idmin', int_to_bytes, bit=64),
+	E('idmax', int_to_bytes, bit=64),
+    ]), 
+
+    M('GetLogLastId', '110300', [		#BGI
+    	E('database', text_to_bytes, size=8),
+    ]),
+
+    M('StatusSPL', '031B00'),			#BGI
+
+    M('GetProductCertificate', '050300', [	#BGI  <== TEST
+     	E('type', int_to_bytes, bit=8),
+     ]),
+
+    M('GetAPIProtocolVersion', '050500'),
+
+
 )
 
 sys.modules[__name__] = MessageListWrapper(sys.modules[__name__], messages=REQUESTS)

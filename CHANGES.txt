@@ -12,5 +12,5 @@ v0.2.1, 2014-10-13 -- Added some commands. Cleaning. Refactoring.
 v0.3.0, 2014-10-14 -- Python 2 and 3 support complete. Bugfixes. Added CPL and SPL Parsers/Creators.
 v0.3.1, 2014-10-14 -- Added commands + "Batch" elements handlers.
 v0.3.2, 2014-10-27 -- Added lazy loading.
-
 v0.3.3, 2014-12-03 -- Git Hooks.
+v0.3.4, 2014-12-22 -- Added commands in Doremi
