@@ -3,7 +3,7 @@
 # vim: ai ts=4 sts=4 et sw=4 nu
 """
 (c) 2014 Ronan Delacroix
-Versionning Utility - Main File - Git Hook
+Versionning Utility - Prepare Commit Message Git Hook
 :author: Ronan Delacroix
 """
 import sys
@@ -12,40 +12,42 @@ import os.path
 import argparse
 import six
 import re
-import readline
 from datetime import date
 
 if six.PY3:
     raw_input = input
 
 
-
-# This is required because git hooks are run in non-interactive
-# mode. You aren't technically supposed to have access to stdin.
-# This hack works on MaxOS and Linux. Mileage may vary on Windows.
-sys.stdin = open('/dev/tty')
-
-
 def main(commit_message_filepath):
+
+    # This is required because git hooks are run in non-interactive
+    # mode. You aren't technically supposed to have access to stdin.
+    # This hack works on MaxOS and Linux. Mileage may vary on Windows.
+    stdin_old = sys.stdin
+    sys.stdin = open('/dev/tty')
 
     commit_message = ''
     with open('CHANGES.txt', 'r') as f:
         lines = f.readlines()
         commit_message = lines[-1]
 
+    commit_parts = commit_message.split(' -- ')
+    commit_message = "%s (%s)" % (commit_parts[2], commit_parts[1])
+
     content = ''
     if os.path.isfile(commit_message_filepath):
         with open(commit_message_filepath, 'r') as f:
             content = f.read()
 
-    content = commit_message + '\n' + content
+    content = commit_message + '\n\n' + content
 
     with open(commit_message_filepath, 'w') as f:
         f.write(content)
 
     print('Commit message set.')
     print('Done.')
-
+    
+    sys.stdin = stdin_old
 
 
 if __name__ == "__main__":

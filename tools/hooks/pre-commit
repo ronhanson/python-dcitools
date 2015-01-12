@@ -3,7 +3,7 @@
 # vim: ai ts=4 sts=4 et sw=4 nu
 """
 (c) 2014 Ronan Delacroix
-Versionning Utility - Main File - Git Hook
+Versionning Utility - Pre Commit Git Hook
 :author: Ronan Delacroix
 """
 import sys
@@ -12,32 +12,10 @@ import os.path
 import argparse
 import six
 import re
-import readline
 from datetime import date
 
 if six.PY3:
     raw_input = input
-
-
-
-# This is required because git hooks are run in non-interactive
-# mode. You aren't technically supposed to have access to stdin.
-# This hack works on MaxOS and Linux. Mileage may vary on Windows.
-sys.stdin = open('/dev/tty')
-
-
-def raw_input_with_default(prompt, default):
-    def pre_input_hook():
-        print('startup hook')
-        readline.insert_text(default)
-        readline.redisplay()
-
-    readline.set_pre_input_hook(pre_input_hook)
-    try:
-        result = input(prompt)
-    finally:
-        readline.set_pre_input_hook()
-    return result
 
 
 def main():
@@ -49,7 +27,14 @@ def main():
     version = ''
     version_label = ''
 
+    # This is required because git hooks are run in non-interactive
+    # mode. You aren't technically supposed to have access to stdin.
+    # This hack works on MaxOS and Linux. Mileage may vary on Windows.
+    stdin_old = sys.stdin
+    sys.stdin = open('/dev/tty')
+
     try:
+
         with open('VERSION.txt', 'rb') as f:
             version = f.read().decode('utf-8').strip()
 
@@ -129,7 +114,7 @@ def main():
                 new_letter = letter+1
         elif a in 'Cc5':
             print(version)
-            custom = raw_input_with_default("Enter the new version manually : ", version)
+            custom = raw_input("Enter the new version manually : ")
             print(custom)
 
         if custom:
@@ -157,7 +142,7 @@ def main():
         print('')
 
     commit_message = "v%s - %s" % (new_version, m)
-    long_commit_message = "v%s, %s -- %s" % (new_version, date.today().strftime('%Y-%m-%d'), m)
+    long_commit_message = "%s -- v%s -- %s" % (date.today().strftime('%Y-%m-%d'), new_version, m)
     print("Final commit message :")
     print(commit_message)
 
@@ -174,6 +159,7 @@ def main():
 
     print('Pre-Commit Done.')
 
+    sys.stdin = stdin_old
 
 
 if __name__ == "__main__":
