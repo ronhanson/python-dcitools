@@ -39,17 +39,17 @@ But it is not yet for now... so just look at the code as it is commented for tha
 Scripts have been created in order to use DCP2000 apis directly from command lines.
 This scripts is named doremi.py and its usage can be found by typing :
 
-   bin/doremiapi --help
+    bin/doremiapi --help
 
 That should be fairly simple.
 
 For example, to list the CPL on a server :
 
-   bin/doremiapi execute 172.17.10.109 GetCPLList
+    bin/doremiapi execute 172.17.10.109 GetCPLList
 
 To get information about a CPL :
 
-   bin/doremiapi x 172.17.10.109 GetCPLInfo 851cc838-022e-43b7-9fee-18656bdfc995
+    bin/doremiapi x 172.17.10.109 GetCPLInfo 851cc838-022e-43b7-9fee-18656bdfc995
 
 
 Compatibility
