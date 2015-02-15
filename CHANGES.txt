@@ -1,18 +1,17 @@
-v0.0.1, 2014-01-22 -- Initial release.
-v0.0.2, 2014-01-23 -- Bugfix on get_schedule_info2 response handler
-v0.0.3, 2014-01-23 -- Command names changes. CLI mode. Auto Completion. Main script doremiapi needs a full code cleanup already.
-v0.0.4, 2014-01-30 -- Loads of bugfixes in handlers. SNMP commands addition.
-v0.0.5, 2014-02-01 -- First version of Schedule Data Seeker.
-v0.0.6, 2014-02-04 -- Small bugfixes, fixed packaging.
-v0.0.7, 2014-02-11 -- Many new feature in Schedule Data Seeker. Refactoring. Settings engine remade.
-v0.0.8, 2014-06-01 -- Update with toolbox. Plenty of changes.
-v0.1.0, 2014-10-03 -- Changed repo. Various updates.
-v0.2.0, 2014-10-13 -- Big Refactoring - revamped Doremi API engine.
-v0.2.1, 2014-10-13 -- Added some commands. Cleaning. Refactoring.
-v0.3.0, 2014-10-14 -- Python 2 and 3 support complete. Bugfixes. Added CPL and SPL Parsers/Creators.
-v0.3.1, 2014-10-14 -- Added commands + "Batch" elements handlers.
-v0.3.2, 2014-10-27 -- Added lazy loading.
-
-v0.3.3, 2014-12-03 -- Git Hooks.
-v0.3.3a, 2014-12-04 -- Small test.
-2015-01-12 -- v0.3.3b -- Git hooks.:wq
+2014-01-22	--	v0.0.1	-- Initial release.
+2014-01-23	--	v0.0.2	-- Bugfix on get_schedule_info2 response handler
+2014-01-23	--	v0.0.3	-- Command names changes. CLI mode. Auto Completion. Main script doremiapi needs a full code cleanup already.
+2014-01-30	--	v0.0.4	-- Loads of bugfixes in handlers. SNMP commands addition.
+2014-02-01	--	v0.0.5	-- First version of Schedule Data Seeker.
+2014-02-04	--	v0.0.6	-- Small bugfixes, fixed packaging.
+2014-02-11	--	v0.0.7	-- Many new feature in Schedule Data Seeker. Refactoring. Settings engine remade.
+2014-06-01	--	v0.0.8	-- Update with toolbox. Plenty of changes.
+2014-10-03	--	v0.1.0	-- Changed repo. Various updates.
+2014-10-13	--	v0.2.0	-- Big Refactoring - revamped Doremi API engine.
+2014-10-13	--	v0.2.1	-- Added some commands. Cleaning. Refactoring.
+2014-10-14	--	v0.3.0	-- Python 2 and 3 support complete. Bugfixes. Added CPL and SPL Parsers/Creators.
+2014-10-14	--	v0.3.1	-- Added commands + "Batch" elements handlers.
+2014-10-27	--	v0.3.2	-- Added lazy loading.
+2014-12-03	--	v0.3.3	-- Git Hooks.
+2014-12-22	--	v0.3.4	-- Added commands in Doremi
+2015-02-15 -- v0.4.0 -- Updated project dependencies (python-tbx renamed) and minor changes.

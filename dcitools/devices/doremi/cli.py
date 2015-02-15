@@ -10,7 +10,7 @@ import sys
 import os
 import cmd
 import shlex
-import toolbox
+import tbx
 from . import server as server
 from . import requests
 import six
@@ -164,7 +164,7 @@ class CLI(cmd.Cmd, object):
             result = self.call_api(cmd, args)
             if result:
                 print("\nResults : \n")
-                result = toolbox.text.pretty_render(result, format=self.format, indent=1)
+                result = tbx.text.pretty_render(result, format=self.format, indent=1)
                 print(result)
 
             return

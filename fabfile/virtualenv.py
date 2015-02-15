@@ -7,7 +7,9 @@ from fabric.api import local, run, cd, env, prefix
 
 @task
 def init():
-    """Execute init tasks for all components (virtualenv, pip)."""
+    """
+    Execute init tasks for all components (virtualenv, pip).
+    """
     if not os.path.isdir('venv'):
         print(cyan('\nCreating the virtual env...'))
 
@@ -19,8 +21,10 @@ def init():
 
 
 @task
-def update():
-    """Update virtual env with requirements packages."""
+def update_requirements():
+    """
+    Update virtual env with requirements packages.
+    """
     with settings(warn_only=True):
         print(cyan('\nInstalling/Updating required packages...'))
 
@@ -30,3 +34,18 @@ def update():
             abort("pip exited with return code %i" % pip.return_code)
 
         print(green('Packages requirements updated.'))
+
+@task
+def update_dev_requirements():
+    """
+    Update virtual env with requirements-dev packages.
+    """
+    with settings(warn_only=True):
+        print(cyan('\nInstalling/Updating dev required packages...'))
+
+        pip = local('venv/bin/pip install -U --allow-all-external --src libs -r requirements-dev.txt', capture=True)
+        if pip.failed:
+            print(red(pip))
+            abort("pip exited with return code %i" % pip.return_code)
+
+        print(green('Packages dev requirements updated.'))

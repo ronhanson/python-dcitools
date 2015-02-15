@@ -6,9 +6,9 @@
 Doremi API Commands definition
 :author: Ronan Delacroix
 """
-import toolbox
+import tbx
 import collections
-from toolbox.bytes import *
+from tbx.bytes import *
 from .message import MessageDefinition
 from . import requests
 from . import responses
@@ -49,8 +49,8 @@ def get_new_request_id_bytes():
 
 
 def explain_klv(data):
-    header_hex = toolbox.bytes.bytes_to_hex(data[0:13])
-    key_hex = toolbox.bytes.bytes_to_hex(data[13:16])
+    header_hex = tbx.bytes.bytes_to_hex(data[0:13])
+    key_hex = tbx.bytes.bytes_to_hex(data[13:16])
     message = requests.get_by_key(data[13:16])
     message_type = 'Request'
     if not message:
@@ -59,14 +59,14 @@ def explain_klv(data):
     if not message:
         return "Error, Message Key %s Unknown" % key_hex
     key_name = message.name + ' ' + message_type
-    ber, ber_size = toolbox.bytes.decode_ber(data[16:])
-    ber_hex = toolbox.bytes.bytes_to_hex(data[16:16+ber_size])
+    ber, ber_size = tbx.bytes.decode_ber(data[16:])
+    ber_hex = tbx.bytes.bytes_to_hex(data[16:16+ber_size])
     payload_start = 16+ber_size
-    id_hex = toolbox.bytes.bytes_to_hex(data[payload_start:payload_start+4])
-    id = toolbox.bytes.bytes_to_int(data[payload_start:payload_start+4])
+    id_hex = tbx.bytes.bytes_to_hex(data[payload_start:payload_start+4])
+    id = tbx.bytes.bytes_to_int(data[payload_start:payload_start+4])
     payload = data[payload_start+4:]
 
-    short_hex = toolbox.bytes.bytes_to_hex(payload)
+    short_hex = tbx.bytes.bytes_to_hex(payload)
     if len(data) > 40:
         short_hex = short_hex[0:40] + str('...')
     return """
@@ -178,7 +178,7 @@ class CommandCall():
         """
         response_header = self.sock.receive(13)
         response_key = self.sock.receive(3)
-        response_payload_size, ber_size, response_ber = toolbox.bytes.ber_from_socket(self.sock)
+        response_payload_size, ber_size, response_ber = tbx.bytes.ber_from_socket(self.sock)
         response_id = self.sock.receive(4)
         response_payload = self.sock.receive(response_payload_size-4)
 

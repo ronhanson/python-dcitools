@@ -9,7 +9,7 @@ import os
 from lxml import etree
 from .cpl import CPL
 import uuid as UUID
-import toolbox
+import tbx
 from datetime import datetime
 try:
     from StringIO import StringIO
@@ -74,12 +74,12 @@ class SPL(object):
 
     @property
     def hms_duration(self):
-        return toolbox.text.seconds_to_hms(self.duration)
+        return tbx.text.seconds_to_hms(self.duration)
 
     def create_xml(self):
         template_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
-        env = toolbox.template.create_jinja_env(template_path=template_path)
-        return toolbox.template.render_template(env, 'spl.xml', self.__dict__)
+        env = tbx.template.create_jinja_env(template_path=template_path)
+        return tbx.template.render_template(env, 'spl.xml', self.__dict__)
 
     def __str__(self):
         return "SPL {} {} ({})".format(self.title, self.uuid, self.hms_duration)

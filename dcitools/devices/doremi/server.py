@@ -7,7 +7,7 @@ Doremi API Server class
 :author: Ronan Delacroix
 """
 from . import commands
-import toolbox
+import tbx
 
 
 TIMEOUT = 30
@@ -27,7 +27,7 @@ class DoremiServer:
         self.port = port
         self.debug = debug
 
-        self.socket = toolbox.network.SocketClient(host, port, timeout=TIMEOUT)
+        self.socket = tbx.network.SocketClient(host, port, timeout=TIMEOUT)
         self.socket.connect()
 
     def command(self, key, *args, **kwargs):

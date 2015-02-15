@@ -5,7 +5,7 @@
 :Author: Ronan Delacroix
 :Copyright: 2014 Ronan Delacroix
 """
-import toolbox
+import tbx
 
 
 class CPL(object):
@@ -31,7 +31,7 @@ class CPL(object):
 
     @property
     def hms_duration(self):
-        return toolbox.text.seconds_to_hms(self.seconds)
+        return tbx.text.seconds_to_hms(self.seconds)
 
     def from_cpl_info(self, cpl_info):
         if cpl_info['id'] != '00000000-0000-0000-0000-000000000000':

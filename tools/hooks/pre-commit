@@ -9,7 +9,6 @@ Versionning Utility - Pre Commit Git Hook
 import sys
 import os
 import os.path
-import argparse
 import six
 import re
 from datetime import date
@@ -142,7 +141,7 @@ def main():
         print('')
 
     commit_message = "v%s - %s" % (new_version, m)
-    long_commit_message = "%s -- v%s -- %s" % (date.today().strftime('%Y-%m-%d'), new_version, m)
+    long_commit_message = "%s\t--\tv%s\t-- %s" % (date.today().strftime('%Y-%m-%d'), new_version, m)
     print("Final commit message :")
     print(commit_message)
 

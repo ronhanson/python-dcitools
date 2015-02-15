@@ -1,8 +1,8 @@
+Digital Cinema Server API Library
+=================================
 
-# Digital Cinema Server API Library
- 
-### Goal
-
+About
+-----
 
 This library attempts to provide a functional and simple python package to manipulate, through their API, different digital cinema servers, players, and theatre management system.
 
@@ -17,14 +17,18 @@ Coming next:
  - Sony ?
  - Qube (someday maybe, haha, I can't wait to code with their API again, it is a bloody joke)
 
-### Usage
+Project url : https://github.com/ronhanson/python-tbx
 
-##### Lib Usage
+
+Usage
+-----
+
+***Lib Usage***
 
 Library is going to be documented in the docs folder.
-It is not for now so just look at the code as it is commented for that.
+But it is not yet for now... so just look at the code as it is commented for that.
 
-##### Script Usage
+***Script Usage***
 
 Scripts have been created in order to use DCP2000 apis directly from command lines.
 This scripts is named doremi.py and its usage can be found by typing :
@@ -32,4 +36,22 @@ This scripts is named doremi.py and its usage can be found by typing :
    bin/doremiapi --help
 
 That should be fairly simple.
+
+
+Compatibility
+-------------
+
+This libraries are used most on Linux and OSX systems, but plenty of functions may work on windows.
+
+This libraries are compatibles with Python 2.X and Python 3.X.
+
+Mainly tested on 2.7 and 3.4.
+
+
+Author & Licence
+----------------
+
+Copyright (c) 2007-2015 Ronan Delacroix
+
+This program is released under MIT Licence. Feel free to use it or part of it anywhere you want.
  

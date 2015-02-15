@@ -45,6 +45,7 @@ etc/config.js
 work/*
 var/log/*
 .deployed.lock
+bin/log
 
 # Temporary files
 #################

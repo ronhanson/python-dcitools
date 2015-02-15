@@ -1,0 +1,2 @@
+-e git+git@github.com:ronhanson/python-toolbox.git#egg=tbx
+six >= 1.8.0

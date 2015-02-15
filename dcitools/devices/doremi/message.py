@@ -7,7 +7,7 @@ Doremi API Requests definition
 :author: Ronan Delacroix
 """
 import six
-import toolbox
+import tbx
 
 class MessageDefinition:
     """
@@ -62,8 +62,8 @@ class ResponseBatch(Element):
     def func(self, byte_array):
 
         result = []
-        length = toolbox.bytes.bytes_to_int(byte_array[0:4])
-        item_size = toolbox.bytes.bytes_to_int(byte_array[4:8])
+        length = tbx.bytes.bytes_to_int(byte_array[0:4])
+        item_size = tbx.bytes.bytes_to_int(byte_array[4:8])
         for i in range(0, length):
             item = {}
             chunk = byte_array[8+i*item_size:8+(i+1)*item_size]

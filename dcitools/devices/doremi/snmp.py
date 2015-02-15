@@ -8,7 +8,7 @@ SNMP commands for DCP2000 Utility
 """
 import datetime
 
-from toolbox.snmp import snmp_get
+from tbx.snmp import snmp_get
 
 
 # -- Doremi OIDs

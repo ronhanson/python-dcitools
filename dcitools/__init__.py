@@ -6,5 +6,5 @@
 DCI Tools lazy loading sub module
 :author: Ronan Delacroix
 """
-import toolbox.code
-toolbox.code.lazy_load_module(__name__)
+import tbx.code
+tbx.code.lazy_load_module(__name__)

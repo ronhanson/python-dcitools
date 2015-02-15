@@ -9,10 +9,7 @@ Versionning Utility - Prepare Commit Message Git Hook
 import sys
 import os
 import os.path
-import argparse
 import six
-import re
-from datetime import date
 
 if six.PY3:
     raw_input = input
@@ -31,8 +28,8 @@ def main(commit_message_filepath):
         lines = f.readlines()
         commit_message = lines[-1]
 
-    commit_parts = commit_message.split(' -- ')
-    commit_message = "%s (%s)" % (commit_parts[2], commit_parts[1])
+    commit_parts = commit_message.split('--')
+    commit_message = "%s (%s)" % (commit_parts[2].strip(), commit_parts[1].strip())
 
     content = ''
     if os.path.isfile(commit_message_filepath):
