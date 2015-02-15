@@ -23,9 +23,12 @@ setup(
     include_package_data=True,
     install_requires=requirements,
     classifiers=[
+        'Topic :: Utilities',
         'Topic :: Software Development :: Libraries',
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
+        'Intended Audience :: Manufacturing',
+        'Intended Audience :: System Administrators',
         'License :: OSI Approved :: MIT License',
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: POSIX',

@@ -6,18 +6,24 @@ About
 
 This library attempts to provide a functional and simple python package to manipulate, through their API, different digital cinema servers, players, and theatre management system.
 
-The only brand/machine actually supported is Doremi DCP2000.
+The only brand actually supported is Doremi (company now bought by Dolby).
+
+Current supported machines are :
+ - DCP2000
+ - DCP-2K4
+ - ShowVault
+ - IMS1000
 
 Coming next: 
  - Doremi TMS
  - AAM TMS
  - Unique TMS
- - GDC
- - Dolby ?
+ - GDC servers
+ - Old Dolby servers
  - Sony ?
  - Qube (someday maybe, haha, I can't wait to code with their API again, it is a bloody joke)
 
-Project url : https://github.com/ronhanson/python-tbx
+Project url : https://github.com/ronhanson/python-dcitools
 
 
 Usage
@@ -36,6 +42,14 @@ This scripts is named doremi.py and its usage can be found by typing :
    bin/doremiapi --help
 
 That should be fairly simple.
+
+For example, to list the CPL on a server :
+
+   bin/doremiapi execute 172.17.10.109 GetCPLList
+
+To get information about a CPL :
+
+   bin/doremiapi x 172.17.10.109 GetCPLInfo 851cc838-022e-43b7-9fee-18656bdfc995
 
 
 Compatibility

@@ -16,3 +16,4 @@
 2014-12-22	--	v0.3.4	-- Added commands in Doremi
 2015-02-15 -- v0.4.0 -- Updated project dependencies (python-tbx renamed) and minor changes.
 2015-02-15 -- v0.4.1 -- Better connection error message
+2015-02-15 -- v0.4.2 -- Minor changes on readme mainly
