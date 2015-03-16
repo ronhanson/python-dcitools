@@ -14,4 +14,4 @@ confirm () {
 }
 
 cd ../..
-confirm "Are you sure you want to remove dist, deb_dist and eggs folders?" && rm -Rf dist deb_dist *.egg-info 
+confirm "Are you sure you want to remove dist, deb_dist and eggs folders?" && rm -Rf stdeb.cfg dist deb_dist *.egg-info

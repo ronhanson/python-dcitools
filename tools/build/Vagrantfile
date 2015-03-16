@@ -6,14 +6,16 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  config.vm.box = "jessie64"
+  config.vm.box = "ubuntu/trusty64"
   config.vm.provider :virtualbox do |vb|
     vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root", "1"]
   end
 
   config.vm.synced_folder "../..", "/vagrant", create:true, nfs:false
 
-  config.vm.provision :shell, :inline => "apt-get -y update && apt-get -y install build-essential python3.4 python3-all python3-requests python3-six python3-stdeb python3-setuptools python-oauthlib python-crypto python-greenlet python-all python-all-dev debhelper python-setuptools python-stdeb apt-file libconfig-file-perl libapt-pkg-perl liblist-moreutils-perl libregexp-assemble-perl"
+  config.vm.provision :shell, :inline => "apt-get -y update && apt-get -y install build-essential python3.4 python3-all python3-requests python3-six python3-setuptools python3-pip python-pip python-oauthlib python-crypto python-greenlet python-all python-all-dev debhelper python-setuptools python-stdeb apt-file libconfig-file-perl libapt-pkg-perl liblist-moreutils-perl libregexp-assemble-perl git"
+  
+  config.vm.provision :shell, :inline => "pip3 install stdeb"
 
 
 end

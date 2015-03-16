@@ -14,11 +14,11 @@ confirm () {
 
 echo "This operation may take long..."
 
-if [ $(vagrant box list | grep "jessie64" | wc -l) -ne 1 ]
+if [ $(vagrant box list | grep "trusty64" | wc -l) -ne 1 ]
 then
-    vagrant box add jessie64 https://downloads.sourceforge.net/project/vagrantboxjessie/debian80.box
+    vagrant box add ubuntu/trusty64 --provider virtualbox
 else
-    echo "Jessie vagrant box already downloaded."
+    echo "Trusty vagrant box already downloaded."
 fi
 
 vagrant up
