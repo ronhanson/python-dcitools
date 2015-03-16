@@ -9,7 +9,8 @@ Doremi API Requests definition
 import six
 import tbx
 
-class MessageDefinition:
+
+class MessageDefinition(object):
     """
     Request Definition object.
     """
@@ -26,7 +27,7 @@ class MessageDefinition:
         return [e.name for e in self.elements]
 
 
-class Element:
+class Element(object):
     """
     Message Element Definition
     """
@@ -53,7 +54,7 @@ class ResponseBatch(Element):
     Response Message Element Definition
     """
     def __init__(self, name, start, end, sub_elements=None):
-        super(ResponseBatch, self).__init__(name, func=self.func)
+        super(ResponseBatch, self).__init__(name=name, func=self.func)
         self.start = start
         self.end = end
         self.sub_elements = sub_elements or []

@@ -11,17 +11,8 @@ import os
 import os.path
 import six
 
-if six.PY3:
-    raw_input = input
-
 
 def main(commit_message_filepath):
-
-    # This is required because git hooks are run in non-interactive
-    # mode. You aren't technically supposed to have access to stdin.
-    # This hack works on MaxOS and Linux. Mileage may vary on Windows.
-    stdin_old = sys.stdin
-    sys.stdin = open('/dev/tty')
 
     commit_message = ''
     with open('CHANGES.txt', 'r') as f:
@@ -44,8 +35,6 @@ def main(commit_message_filepath):
     print('Commit message set.')
     print('Done.')
     
-    sys.stdin = stdin_old
-
 
 if __name__ == "__main__":
     main(sys.argv[1])

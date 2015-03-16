@@ -30,7 +30,10 @@ def main():
     # mode. You aren't technically supposed to have access to stdin.
     # This hack works on MaxOS and Linux. Mileage may vary on Windows.
     stdin_old = sys.stdin
-    sys.stdin = open('/dev/tty')
+    try:
+        sys.stdin = open('/dev/tty')
+    except:
+        exit(0)
 
     try:
 
