@@ -1,0 +1,20 @@
+#!/bin/sh
+root=$(python -c 'import os,sys;print os.path.realpath("%s/../../" % sys.argv[1])' "$0")
+ipaddr=${1:-"dcp2000"}
+
+pushd "${root}" > /dev/null
+	source ${root}/venv/bin/activate
+	export PYTHONPATH=".:${root}/../python-toolbox/"
+	${root}/bin/doremiapi execute --debug "${ipaddr}" GetAPIProtocolVersion
+
+	if [ $? -eq 0 ]; then
+		echo "bin/doremiapi OK"
+	else
+		echo "bin/doremiapi FAIL"
+		echo "* Check virtualenv activate shell (${root}/venv/bin/activate)"
+		echo "* Check PYTHONPATH (${PYTHONPATH})"
+		echo "* Check installed librairies (use pip install <lib>)"
+		echo "* Check ip address"
+	fi
+popd > /dev/null
+

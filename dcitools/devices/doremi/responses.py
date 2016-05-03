@@ -219,7 +219,7 @@ RESPONSES = (
 	E('response', -1, None, bytes_to_int),
      ]),
 
-      M('StatusSPL', '031C00', [		#BGI	#TODO:Test
+      M('StatusSPL', '031C00', [		#BGI
       	E('playblack_state', 0, 1, bytes_to_int, {0:'Error/Unknown', 1:'Stop', 2:'Play', 3:'Pause'} ),
 	E('spl_id', 1, 17, bytes_to_uuid),
 	E('show_playlist_position', 17, 21, bytes_to_int),
@@ -231,9 +231,30 @@ RESPONSES = (
 	E('current_element_duration', 77, 81, bytes_to_int),
 	E('response', -1, None, bytes_to_int),
       ]),
+      M('StatusSPL2', '031C01', [		#BGI
+      	E('playblack_state', 0, 1, bytes_to_int, {0:'Error/Unknown', 1:'Stop', 2:'Play', 3:'Pause'} ),
+	E('spl_id', 1, 17, bytes_to_uuid),
+	E('show_playlist_position', 17, 21, bytes_to_int),
+	E('show_playlist_duration', 21, 25, bytes_to_int),
+	E('current_cpl_id', 25, 41, bytes_to_uuid),
+	E('current_event_id', 41, 57, bytes_to_uuid),
+	E('current_element_id', 57, 73, bytes_to_uuid),
+	E('current_element_position', 73, 77, bytes_to_int),
+	E('current_element_duration', 77, 81, bytes_to_int),
+
+	E('flags', 81, 85, bytes_to_int),
+	E('current_element_edit_rate_num', 85, 87, bytes_to_int),
+	E('current_element_edit_rate_den', 87, 89, bytes_to_int),
+	E('current_element_edit_position', 89, 93, bytes_to_int),
+	E('current_element_edit_duration', 93, 97, bytes_to_int),
+	E('current_element_frames_per_edit', 97, 99, bytes_to_int),
+	E('current_element_kdm_uuid', 99, 103, bytes_to_int),
+
+	E('response', -1, None, bytes_to_int),
+      ]),
 
 
-      M('GetProductCertificate', '050400', [	#BGI  <== TEST
+      M('GetProductCertificate', '050400', [	#BGI
       	E('certificate', 0, -1, bytes_to_text),
 	E('response', -1, None, bytes_to_int),
       ]),

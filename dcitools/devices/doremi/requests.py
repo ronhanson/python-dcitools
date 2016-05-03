@@ -67,9 +67,12 @@ REQUESTS = (
     	E('database', text_to_bytes, size=8),
     ]),
 
-    M('StatusSPL', '031B00'),			#BGI
+    M('StatusSPL',  '031B00'),			#BGI
+    M('StatusSPL2', '031B01', [			#BGI
+    	E('flags', int_to_bytes, size=4),	# Uint32 (4 bytes) : 0x00 0x00 0x00 0x00
+    ]),			
 
-    M('GetProductCertificate', '050300', [	#BGI  <== TEST
+    M('GetProductCertificate', '050300', [	#BGI 
      	E('type', int_to_bytes, bit=8),
      ]),
 
