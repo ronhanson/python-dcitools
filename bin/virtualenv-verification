@@ -8,7 +8,13 @@ pushd "${root}" > /dev/null
 	${root}/bin/doremiapi execute --debug "${ipaddr}" GetAPIProtocolVersion
 
 	if [ $? -eq 0 ]; then
+		echo ""
+		echo "source ${root}/venv/bin/activate"
+		echo "export PYTHONPATH=.:${root}/../python-toolbox/"
+		echo "${root}/bin/doremiapi execute --debug ${ipaddr} GetAPIProtocolVersion"
+		echo ""
 		echo "bin/doremiapi OK"
+		echo ""
 	else
 		echo "bin/doremiapi FAIL"
 		echo "* Check virtualenv activate shell (${root}/venv/bin/activate)"

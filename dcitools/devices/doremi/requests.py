@@ -76,8 +76,10 @@ REQUESTS = (
      	E('type', int_to_bytes, bit=8),
      ]),
 
-    M('GetAPIProtocolVersion', '050500'),
+    M('GetAPIProtocolVersion', '050500'),	#BGI
 
+    M('PlaySPL', '030B00'),			#BGI
+    M('PauseSPL', '030D00'),			#BGI
 
 )
 

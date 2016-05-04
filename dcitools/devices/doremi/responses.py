@@ -259,13 +259,19 @@ RESPONSES = (
 	E('response', -1, None, bytes_to_int),
       ]),
 
-      M('GetAPIProtocolVersion', '050600', [
+      M('GetAPIProtocolVersion', '050600', [	#BGI
       	E('version_major', 0, 1, bytes_to_int),
 	E('version_minor', 1, 2, bytes_to_int),
 	E('version_build', 2, 3, bytes_to_int),
       ]),
 
+    M('PlaySPL', '030C00', [			#BGI
+        E('response', -1, None, bytes_to_int),
+    ]),
 
+    M('PauseSPL', '030E00', [			#BGI
+        E('response', -1, None, bytes_to_int),
+    ]),
 
 
 )
