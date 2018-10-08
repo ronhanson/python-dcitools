@@ -7,7 +7,7 @@ Doremi API Requests definition
 :author: Ronan Delacroix
 """
 import six
-import tbx
+import tbx.bytes
 
 
 class MessageDefinition(object):

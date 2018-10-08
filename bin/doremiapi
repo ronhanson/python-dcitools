@@ -17,7 +17,8 @@ import dcitools.devices.doremi.server as doremi_server
 import dcitools.devices.doremi.cli as doremi_cli
 import dcitools.devices.doremi.requests as requests
 
-import tbx
+import tbx.log
+import tbx.text
 tbx.log.configure_logging_to_screen()
 
 

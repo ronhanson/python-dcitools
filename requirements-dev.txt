@@ -1,2 +1,3 @@
 -e git+git@github.com:ronhanson/python-toolbox.git#egg=tbx
 six >= 1.8.0
+pysnmp >= 4.2.5

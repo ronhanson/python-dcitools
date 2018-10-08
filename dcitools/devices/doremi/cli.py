@@ -10,7 +10,7 @@ import sys
 import os
 import cmd
 import shlex
-import tbx
+import tbx.text
 from . import server as server
 from . import requests
 import six

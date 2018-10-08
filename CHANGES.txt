@@ -19,3 +19,4 @@
 2015-02-15  --  v0.4.2  -- Minor changes on readme mainly
 2015-02-15	--	v0.4.2a	-- Cosmetic changes
 2015-03-17	--	v0.4.3	-- Build script update
+2018-10-08	--	v0.5.0	-- Updated requirements + include SNMP Get from tbx lib + small code fixes

@@ -7,7 +7,7 @@ Doremi API Server class
 :author: Ronan Delacroix
 """
 from . import commands
-import tbx
+import tbx.network
 
 
 TIMEOUT = 30
