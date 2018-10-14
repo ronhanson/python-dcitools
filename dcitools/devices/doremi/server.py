@@ -7,6 +7,7 @@ Doremi API Server class
 :author: Ronan Delacroix
 """
 from . import commands
+from . import requests
 import tbx.network
 
 
@@ -19,7 +20,7 @@ class DoremiServer:
     Handles sending and receiving commands through sockets.
     """
 
-    def __init__(self, host, port=11730, debug=False):
+    def __init__(self, host, port=11730, debug=False, bypass_connection=False):
         """
         Create connection and connect to the server
         """
@@ -27,8 +28,11 @@ class DoremiServer:
         self.port = port
         self.debug = debug
 
-        self.socket = tbx.network.SocketClient(host, port, timeout=TIMEOUT)
-        self.socket.connect()
+        if not bypass_connection:
+            self.socket = tbx.network.SocketClient(host, port, timeout=TIMEOUT)
+            self.socket.connect()
+        else:
+            self.socket = None
 
     def command(self, key, *args, **kwargs):
         """
@@ -49,7 +53,7 @@ class DoremiServer:
         """
         Allows retrieval of callable command.
         """
-        if key in commands.NAMES:
+        if key in requests.list_names():
             return commands.CommandCall(self.socket, key, self.debug, self.host, self.port)
         else:
             raise AttributeError

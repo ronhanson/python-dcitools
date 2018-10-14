@@ -122,9 +122,14 @@ def construct_message(message, *args, **kwargs):
             if element.name in kwargs.keys():
                 arg = kwargs[element.name]
             else:
+                if arg_iterator >= len(args):
+                    raise Exception('Parameter %s is missing' % element.name)
                 arg = args[arg_iterator]
                 arg_iterator += 1
-            value = element.func(arg, **element.kwargs)
+            try:
+                value = element.func(arg, **element.kwargs)
+            except Exception as e:
+                raise Exception("Error while parsing value of parameter '%s' : ERROR - %s" % (element.name, e))
             payload_values.append(value)
 
     payload = id + b''.join(payload_values)

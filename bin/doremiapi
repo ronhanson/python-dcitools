@@ -108,6 +108,30 @@ def cli(address, port=11730, format='text', debug=False):
     exit(0)
 
 
+def http(address, port=11730, http_bind='0.0.0.0', http_port=8087, debug=False):
+    """
+    HTTP Restful API proxy server.
+
+    Allows you to create a HTTP Restful API server to proxy commands to a Doremi. You can then send the commands you want through http.
+
+    address: Address of the server
+
+    port: Port of the server
+
+    debug: Debug mode
+    """
+    tbx.log.configure_logging_to_screen(debug)
+
+    import bottle
+    import dcitools.devices.doremi.http as http
+    api = http.HTTPProxy(address=address, port=port, debug=debug)
+    http.routeapp(api)
+
+    bottle.run(host=http_bind, port=http_port, debug=debug)
+
+    exit(0)
+    
+
 def snmplist():
     """
     List available SNMP Command Keys
@@ -195,6 +219,14 @@ def main():
     cli_parser.add_argument('--format', choices=['text', 'xml', 'json', 'html'], help='Format to display the response.')
     cli_parser.add_argument('--debug',  action='store_true', help='Enable Debugging Output.')
     cli_parser.set_defaults(func=cli)
+
+    http_parser = parsers.add_parser('http', help="HTTP Restul API proxy to Doremi API.")
+    http_parser.add_argument('address', help='Address of the Doremi server.')
+    http_parser.add_argument('--port', type=int, default=11730, help='Port to connect the Doremi server.')
+    http_parser.add_argument('--debug',  action='store_true', help='Enable Debugging Output.')
+    http_parser.add_argument('--http-bind', default='0.0.0.0', help='HTTP bind address for serving API.')
+    http_parser.add_argument('--http-port', default=8087, help='HTTP Port for serving API.')
+    http_parser.set_defaults(func=http)
 
     version_parser = parsers.add_parser('version', help="Display the version of the dcitools library.")
     version_parser.set_defaults(func=version)
