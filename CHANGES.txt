@@ -21,3 +21,4 @@
 2015-03-17	--	v0.4.3	-- Build script update
 2018-10-08	--	v0.5.0	-- Updated requirements + include SNMP Get from tbx lib + small code fixes
 2018-10-14	--	v0.6.0	-- Added HTTP Proxy API service to allow command usage through HTTP. First draft, merely tested.
+2018-10-15	--	v0.6.1	-- Fix for uuid and datetime objects over json serialization (http proxy)

@@ -8,25 +8,26 @@ Doremi DCP2000 CLI Only Utility - Main File
 """
 import sys
 import os
-import cmd
-import shlex
+import six
 import tbx.text
 import logging
 from . import server as server
 from . import requests
-import six
 import bottle
 from bottle import request
+from json import JSONEncoder
+from datetime import datetime
+import uuid
 
 
-def routeapp(obj):
+def routeapp(app, obj):
     for kw in dir(obj):
         attr = getattr(obj, kw)
         if hasattr(attr, 'route'):
             method = 'GET'
             if hasattr(attr, 'method'):
                 method = attr.method
-            bottle.route(attr.route, method=method)(attr)
+            app.route(attr.route, method=method)(attr)
 
 
 def methodroute(route, method=None):
@@ -36,6 +37,15 @@ def methodroute(route, method=None):
             f.method = method
         return f
     return decorator
+
+
+class MyJsonEncoder(JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return str(obj.strftime("%Y-%m-%d %H:%M:%S"))
+        if isinstance(obj, uuid.UUID):
+            return str(obj)
+        return JSONEncoder.default(self, obj)
 
 
 class HTTPProxy(object):
@@ -49,12 +59,11 @@ class HTTPProxy(object):
     def connect(self):
         print("Connection...")
         try:
-            self.client = server.DoremiServer(self.address, port=self.port, debug=self.debug) #, bypass_connection=True)
+            self.client = server.DoremiServer(self.address, port=self.port, debug=self.debug, bypass_connection=True)
         except:
             print("Connection to %s:%s failed." % (self.address, self.port))
             exit(1)
         print("Connected to Doremi DCP2000 server on %s:%s" % (self.address, self.port))
-
 
     @methodroute('/')
     def index(self):
@@ -64,20 +73,22 @@ class HTTPProxy(object):
 
     @methodroute('/<command>', method='GET')
     def doc(self, command):
+        key = None
+        parameters = None
         status = "error"
         message = "Unknown error"
 
         if command not in requests.list_names():
             message = 'Unknown command name - "%s" not available' % command
+        else:
+            req = requests.get(command)
 
-        req = requests.get(command)
+            key = req.key.encode('hex')
 
-        key = req.key.encode('hex')
+            parameters = [{"name": e.name, "type": e.func.__name__.replace('_to_bytes', '')} for e in req.elements]
 
-        parameters = [{"name": e.name, "type": e.func.__name__.replace('_to_bytes', '')} for e in req.elements]
-
-        status = "success"
-        message = "OK"
+            status = "success"
+            message = "OK"
 
         return {
             "command": command,
@@ -90,7 +101,10 @@ class HTTPProxy(object):
 
     @methodroute('/<command>', method='POST')
     def request(self, command):
-        payload = dict(request.json)
+        payload = {}
+        if request.json:
+            payload = dict(request.json)
+
         status = "error"
         message = "Unknown error"
         result = {}
