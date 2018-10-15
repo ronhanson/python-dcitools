@@ -41,6 +41,11 @@ def methodroute(route, method=None):
 
 class MyJsonEncoder(JSONEncoder):
     def default(self, obj):
+        if isinstance(obj, str):
+            if six.PY2:
+                return obj.decode('unicode-escape').strip('\x00')
+            else:
+                return obj.strip('\x00')
         if isinstance(obj, datetime):
             return str(obj.strftime("%Y-%m-%d %H:%M:%S"))
         if isinstance(obj, uuid.UUID):
