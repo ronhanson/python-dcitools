@@ -59,7 +59,7 @@ class HTTPProxy(object):
     def connect(self):
         print("Connection...")
         try:
-            self.client = server.DoremiServer(self.address, port=self.port, debug=self.debug, bypass_connection=True)
+            self.client = server.DoremiServer(self.address, port=self.port, debug=self.debug)  #, bypass_connection=True)
         except:
             print("Connection to %s:%s failed." % (self.address, self.port))
             exit(1)
