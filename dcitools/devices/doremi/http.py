@@ -58,7 +58,6 @@ class HTTPProxy(object):
         self.address = address
         self.port = port
         self.debug = debug
-
         self.connect()
 
     def connect(self):
@@ -87,11 +86,8 @@ class HTTPProxy(object):
             message = 'Unknown command name - "%s" not available' % command
         else:
             req = requests.get(command)
-
             key = req.key.encode('hex')
-
             parameters = [{"name": e.name, "type": e.func.__name__.replace('_to_bytes', '')} for e in req.elements]
-
             status = "success"
             message = "OK"
 
@@ -101,7 +97,6 @@ class HTTPProxy(object):
             "parameters": parameters,
             "status": status,
             "message": message
-
         }
 
     @methodroute('/<command>', method='POST')

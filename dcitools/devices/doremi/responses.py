@@ -12,13 +12,9 @@ from .message import MessageListWrapper, MessageDefinition as M, ResponseElement
 
 
 RESPONSES = (
+
+    # CPL
     M('GetCPLList', '010200', [
-        E('amount', 0, 4, bytes_to_int),
-        E('item_length', 4, 8, bytes_to_int),
-        E('list', 8, -1, bytes_to_uuid_list),
-        E('response', -1, None, bytes_to_int),
-    ]),
-    M('GetSPLList', '030200', [
         E('amount', 0, 4, bytes_to_int),
         E('item_length', 4, 8, bytes_to_int),
         E('list', 8, -1, bytes_to_uuid_list),
@@ -102,19 +98,6 @@ RESPONSES = (
         E('unknown_field', -5, -1, bytes_to_int),
         E('response', -1, None, bytes_to_int),
     ]),
-    M('GetProductInfo', '050200', [
-        E('product_name', 0, 16, bytes_to_text),
-        E('product_serial', 16, 32, bytes_to_text),
-        E('product_id', 32, 48, bytes_to_uuid),
-        E('software_version_major', 48, 49, bytes_to_int),
-        E('software_version_minor', 49, 50, bytes_to_int),
-        E('software_version_revision', 50, 51, bytes_to_int),
-        E('software_version_build', 51, 52, bytes_to_int),
-        E('hardware_version_major', 52, 53, bytes_to_int),
-        E('hardware_version_minor', 53, 54, bytes_to_int),
-        E('hardware_version_build', 54, 55, bytes_to_int),
-        E('hardware_version_extra', 55, 56, bytes_to_int),
-    ]),
     M('DeleteCPL', '010600', [
         E('response', -1, None, bytes_to_int),
     ]),
@@ -163,6 +146,7 @@ RESPONSES = (
         ]),
     ]),
 
+    # KDM
     M('GetKDMList', '020200', [ #TODO : Test
         E('amount', 0, 4, bytes_to_int),
         E('item_length', 4, 8, bytes_to_int),
@@ -191,89 +175,182 @@ RESPONSES = (
         E('x509_subject_name', -257, -1, bytes_to_text),
         E('response', -1, None, bytes_to_int),
     ]),
-
-    M('GetTimeZone', '052000', [		#BGI
-    	E('timezone', 0, -1, bytes_to_text),
+    
+    # MISC
+    M('GetTimeZone', '052000', [  # BGI
+        E('timezone', 0, -1, bytes_to_text),
+        E('response', -1, None, bytes_to_int),
+    ]),
+    M('WhoAmI', '0E0C00', [           # BGI
+        E('username', 0, 16, bytes_to_text),
+        E('dci_level', 16, -1, bytes_to_int),
         E('response', -1, None, bytes_to_int),
     ]),
 
-    M('WhoAmI', '0E0C00', [ 			#BGI
-    	E('username', 0, 16, bytes_to_text),
-	E('dci_level', 16, -1, bytes_to_int),
-	E('response', -1, None, bytes_to_int),
+    # LOGS
+    M('GetLog', '110200', [           # BGI
+        E('errorcode', 0, 1, bytes_to_int),
+        E('reserved0', 1, 1, bytes_to_int),
+        E('reserved1', 2, 2, bytes_to_int),
+        E('xml', 4, -1, bytes_to_text),
+        E('response', -1, None, bytes_to_int),
     ]),
-
-    M('GetLog', '110200', [ 			#BGI
-	E('errorcode', 0, 1, bytes_to_int),
-	E('reserved0', 1, 1, bytes_to_int),
-	E('reserved1', 2, 2, bytes_to_int),
-	E('xml', 4, -1, bytes_to_text),
-	E('response', -1, None, bytes_to_int),
-    ]),
-
-     M('GetLogLastId', '110400', [		#BGI
-     	E('errorcode', 0, 1, bytes_to_text),
-	E('reserved0', 1, 1, bytes_to_int),
-	E('reserved1', 2, 2, bytes_to_int),
-	E('last_id', 4, -1, bytes_to_int),
-	E('response', -1, None, bytes_to_int),
-     ]),
-
-      M('StatusSPL', '031C00', [		#BGI
-      	E('playblack_state', 0, 1, bytes_to_int, {0:'Error/Unknown', 1:'Stop', 2:'Play', 3:'Pause'} ),
-	E('spl_id', 1, 17, bytes_to_uuid),
-	E('show_playlist_position', 17, 21, bytes_to_int),
-	E('show_playlist_duration', 21, 25, bytes_to_int),
-	E('current_cpl_id', 25, 41, bytes_to_uuid),
-	E('current_event_id', 41, 57, bytes_to_uuid),
-	E('current_element_id', 57, 73, bytes_to_uuid),
-	E('current_element_position', 73, 77, bytes_to_int),
-	E('current_element_duration', 77, 81, bytes_to_int),
-	E('response', -1, None, bytes_to_int),
-      ]),
-      M('StatusSPL2', '031C01', [		#BGI
-      	E('playblack_state', 0, 1, bytes_to_int, {0:'Error/Unknown', 1:'Stop', 2:'Play', 3:'Pause'} ),
-	E('spl_id', 1, 17, bytes_to_uuid),
-	E('show_playlist_position', 17, 21, bytes_to_int),
-	E('show_playlist_duration', 21, 25, bytes_to_int),
-	E('current_cpl_id', 25, 41, bytes_to_uuid),
-	E('current_event_id', 41, 57, bytes_to_uuid),
-	E('current_element_id', 57, 73, bytes_to_uuid),
-	E('current_element_position', 73, 77, bytes_to_int),
-	E('current_element_duration', 77, 81, bytes_to_int),
-
-	E('flags', 81, 85, bytes_to_int),
-	E('current_element_edit_rate_num', 85, 87, bytes_to_int),
-	E('current_element_edit_rate_den', 87, 89, bytes_to_int),
-	E('current_element_edit_position', 89, 93, bytes_to_int),
-	E('current_element_edit_duration', 93, 97, bytes_to_int),
-	E('current_element_frames_per_edit', 97, 99, bytes_to_int),
-	E('current_element_kdm_uuid', 99, 103, bytes_to_int),
-
-	E('response', -1, None, bytes_to_int),
-      ]),
-
-
-      M('GetProductCertificate', '050400', [	#BGI
-      	E('certificate', 0, -1, bytes_to_text),
-	E('response', -1, None, bytes_to_int),
-      ]),
-
-      M('GetAPIProtocolVersion', '050600', [	#BGI
-      	E('version_major', 0, 1, bytes_to_int),
-	E('version_minor', 1, 2, bytes_to_int),
-	E('version_build', 2, 3, bytes_to_int),
-      ]),
-
-    M('PlaySPL', '030C00', [			#BGI
+    M('GetLogLastId', '110400', [  # BGI
+        E('errorcode', 0, 1, bytes_to_text),
+        E('reserved0', 1, 1, bytes_to_int),
+        E('reserved1', 2, 2, bytes_to_int),
+        E('last_id', 4, -1, bytes_to_int),
         E('response', -1, None, bytes_to_int),
     ]),
 
-    M('PauseSPL', '030E00', [			#BGI
+    # SPL
+    M('GetSPLList', '030200', [
+        E('amount', 0, 4, bytes_to_int),
+        E('item_length', 4, 8, bytes_to_int),
+        E('list', 8, -1, bytes_to_uuid_list),
+        E('response', -1, None, bytes_to_int),
+    ]),
+    M('StoreSPL', '032000', [
+        E('response', -1, None, bytes_to_int),
+    ]),
+    M('ValidateSPL', '032600', [
+        E('result', 0, 1, bytes_to_int),
+        E('error_code', 1, 2, bytes_to_int, {
+            0: 'No Error nor warning',
+            1: 'SPL is not registered on this server',
+            2: 'SPL is not registered on this server',
+            3: 'SPL is registered on this server but cannot be loaded',
+            255: 'Out of memory',
+        }),
+        E('cpl_id', 2, 18, uuid_to_bytes),
+        E('error_message', 18, -1, bytes_to_text),
+        E('response', -1, None, bytes_to_int),
+    ]),
+    M('PlaySPL', '030C00', [  # BGI
+        E('response', -1, None, bytes_to_int),
+    ]),
+    M('PauseSPL', '030E00', [  # BGI
+        E('response', -1, None, bytes_to_int),
+    ]),
+    M('StatusSPL', '031C00', [  # BGI
+        E('playblack_state', 0, 1, bytes_to_int, {0:'Error/Unknown', 1:'Stop', 2:'Play', 3:'Pause'} ),
+        E('spl_id', 1, 17, bytes_to_uuid),
+        E('show_playlist_position', 17, 21, bytes_to_int),
+        E('show_playlist_duration', 21, 25, bytes_to_int),
+        E('current_cpl_id', 25, 41, bytes_to_uuid),
+        E('current_event_id', 41, 57, bytes_to_uuid),
+        E('current_element_id', 57, 73, bytes_to_uuid),
+        E('current_element_position', 73, 77, bytes_to_int),
+        E('current_element_duration', 77, 81, bytes_to_int),
+        E('response', -1, None, bytes_to_int),
+    ]),
+    M('StatusSPL2', '031C01', [  # BGI
+        E('playblack_state', 0, 1, bytes_to_int, {0:'Error/Unknown', 1:'Stop', 2:'Play', 3:'Pause'} ),
+        E('spl_id', 1, 17, bytes_to_uuid),
+        E('show_playlist_position', 17, 21, bytes_to_int),
+        E('show_playlist_duration', 21, 25, bytes_to_int),
+        E('current_cpl_id', 25, 41, bytes_to_uuid),
+        E('current_event_id', 41, 57, bytes_to_uuid),
+        E('current_element_id', 57, 73, bytes_to_uuid),
+        E('current_element_position', 73, 77, bytes_to_int),
+        E('current_element_duration', 77, 81, bytes_to_int),
+
+        E('flags', 81, 85, bytes_to_int),
+        E('current_element_edit_rate_num', 85, 87, bytes_to_int),
+        E('current_element_edit_rate_den', 87, 89, bytes_to_int),
+        E('current_element_edit_position', 89, 93, bytes_to_int),
+        E('current_element_edit_duration', 93, 97, bytes_to_int),
+        E('current_element_frames_per_edit', 97, 99, bytes_to_int),
+        E('current_element_kdm_uuid', 99, 103, bytes_to_int),
+
+        E('response', -1, None, bytes_to_int),
+      ]),
+
+    # SCHEDULE
+    M('AddSchedule2', '040201', [
+        E('schedule_id', 0, 8, bytes_to_int),
+        E('response', -1, None, bytes_to_int),
+    ]),
+    M('GetScheduleInfo2', '040801', [
+        E('schedule_id', 0, 8, bytes_to_int),
+        E('spl_id', 8, 24, bytes_to_uuid),
+        E('time', 24, 28, text_to_bytes, ),
+        E('duration', 28, 32, int_to_bytes, ),
+        E('status', 32, 33, int_to_bytes, {
+            0: 'recorded',
+            1: 'success',
+            2: 'failed',
+            3: 'failed because a show was running',
+        }),
+        E('flags', 33, 41, int_to_bytes),
+        E('annotation_text', 41, -1, text_to_bytes),
+        E('response', -1, None, bytes_to_int),
+    ]),
+    M('GetCurrentSchedule', '040A00', [
+        E('schedule_id', 0, 8, bytes_to_int),
+        E('response', -1, None, bytes_to_int),
+    ]),
+    M('GetNextSchedule', '040C00', [
+        E('schedule_id', 0, 8, bytes_to_int),
+        E('response', -1, None, bytes_to_int),
+    ]),
+    M('SetSchedulerEnable', '040E00', [
+        E('response', -1, None, bytes_to_int),
+    ]),
+    M('GetSchedulerEnable', '041000', [
+        E('response', 0, 1, bytes_to_bool),
         E('response', -1, None, bytes_to_int),
     ]),
 
+    # PRODUCT
+    M('GetProductInfo', '050200', [
+        E('product_name', 0, 16, bytes_to_text),
+        E('product_serial', 16, 32, bytes_to_text),
+        E('product_id', 32, 48, bytes_to_uuid),
+        E('software_version_major', 48, 49, bytes_to_int),
+        E('software_version_minor', 49, 50, bytes_to_int),
+        E('software_version_revision', 50, 51, bytes_to_int),
+        E('software_version_build', 51, 52, bytes_to_int),
+        E('hardware_version_major', 52, 53, bytes_to_int),
+        E('hardware_version_minor', 53, 54, bytes_to_int),
+        E('hardware_version_build', 54, 55, bytes_to_int),
+        E('hardware_version_extra', 55, 56, bytes_to_int),
+    ]),
+    M('GetProductCertificate', '050400', [        #BGI
+        E('certificate', 0, -1, bytes_to_text),
+        E('response', -1, None, bytes_to_int),
+    ]),
+    M('GetAPIProtocolVersion', '050600', [        #BGI
+        E('version_major', 0, 1, bytes_to_int),
+        E('version_minor', 1, 2, bytes_to_int),
+        E('version_build', 2, 3, bytes_to_int),
+    ]),
 
+    # INGEST
+    M('IngestAddJob', '071000', [
+        E('job_id', 0, 8, bytes_to_int),
+        E('response', -1, None, bytes_to_int),
+    ]),
+    M('IngestGetJobStatus', '071E00', [
+        E('error_count', 0, 4, bytes_to_int),
+        E('warning_count', 4, 8, bytes_to_int),
+        E('event_count', 8, 12, bytes_to_int),
+        E('status', 12, 16, bytes_to_int, {
+            0: 'pending',
+            1: 'paused',
+            2: 'running',
+            3: 'scheduled',
+            4: 'success',
+            5: 'aborted',
+            6: 'unused',
+            7: 'failed'
+        }),
+        E('download_progress', 16, 20, bytes_to_int),
+        E('process_progress', 20, 24, bytes_to_int),
+        E('actions', 24, 28, bytes_to_int),
+        E('title', 28, -1, bytes_to_text),
+        E('response', -1, None, bytes_to_int),
+    ]),
 )
 
 sys.modules[__name__] = MessageListWrapper(sys.modules[__name__], messages=RESPONSES)
