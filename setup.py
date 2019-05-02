@@ -16,7 +16,7 @@ setup(
     url='https://github.com/ronhanson/python-dcitools',
     packages=find_packages(where='.', exclude=["fabfile", "tools", "*.tests", "*.tests.*", "tests.*", "tests"]),
     package_data={}, #{'mypkg': ['data/*.dat']},
-    scripts=[],
+    scripts=['bin/doremiapi'],
     license=open('LICENCE.txt').read().strip(),
     description='Digital Cinema related collection of tools for Python',
     long_description=open('README.md').read().strip(),
